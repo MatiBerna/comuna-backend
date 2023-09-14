@@ -1,0 +1,38 @@
+### obterner todas los tipos de competicion
+GET http://localhost:3000/api/competition-type
+
+### obtener un tipo de competicion por su id
+
+GET http://localhost:3000/api/competition-type/cd
+
+###añado un tipo de competencia nuevo
+POST http://localhost:3000/api/competition-type
+Content-Type: application/json
+
+{
+  "id": "lvda",
+  "description": "Levantamiento de dedo anular",
+  "rules": "No se puede levantar un dedo que no sea el anular, si lo hace, quedará descalificado. Gana el que levante mas veces el dedo anular"
+}
+
+### modifico totalmente un tipo de competencia
+PUT http://localhost:3000/api/competition-type/lmd
+Content-Type: application/json
+
+{
+  "id": "lmm",
+  "description": "Levantamiento de dedo meñique",
+  "rules": "No se puede levantar un dedo que no sea el meñique, si lo hace, quedará descalificado. Gana el que levante más veces el dedo meñique"
+}
+
+
+### modifico parcialmente un tipo de competencia
+PATCH  http://localhost:3000/api/competition-type/lmm
+Content-Type: application/json
+
+{
+  "id": "lmmq"
+}
+
+### elimino una persona
+DELETE http://localhost:3000/api/competition-type/lmmq

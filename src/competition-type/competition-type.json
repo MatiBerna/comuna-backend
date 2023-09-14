@@ -1,0 +1,22 @@
+[
+  {
+    "id": "lpc",
+    "description": "Levantamiento de pesas con codo",
+    "rules": "No se puede levantar un peso que no sea con el codo, si lo hace, quedará descalificado. Gana el que levante más veces el peso con el codo"
+  },
+  {
+    "id": "lmd",
+    "description": "Levantamiento de dedo medio",
+    "rules": "No se puede levantar un dedo que no sea el medio, si lo hace, quedará descalificado. Gana el que levante más veces el dedo medio"
+  },
+  {
+    "id": "cb",
+    "description": "Concurso de baile",
+    "rules": "No se puede realizar un baile que no sea el asignado, si lo hace, quedará descalificado. Gana el que reciba más votos del jurado"
+  },
+  {
+    "id": "cd",
+    "description": "Carrera de distancia",
+    "rules": "No se puede salir de la pista, si lo hace, quedará descalificado. Gana el que llegue primero a la meta"
+  }
+]
