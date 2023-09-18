@@ -6,7 +6,6 @@ const repository = new CompetitionTypeRepository()
 
 export function sanitizePersonInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
-    id: req.body.id,
     description: req.body.description,
     rules: req.body.rules,
   }
@@ -26,7 +25,7 @@ export async function findAll(req: Request, res: Response) {
 }
 
 export async function findOne(req: Request, res: Response) {
-  const id = req.params.id
+  const id = parseInt(req.params.id)
   const competitionType = await repository.findOne({ id })
 
   if (!competitionType) {
@@ -38,14 +37,14 @@ export async function findOne(req: Request, res: Response) {
 export async function add(req: Request, res: Response) {
   const input = req.body.sanitizedInput
 
-  const competitionTypeInput = new CompetitionType(input.id, input.description, input.rules)
+  const competitionTypeInput = new CompetitionType(input.description, input.rules)
 
   const competitionType = await repository.add(competitionTypeInput)
   return res.status(201).json({ message: 'Competition Type created', data: competitionType })
 }
 
 export async function update(req: Request, res: Response) {
-  const id = req.params.id
+  const id = parseInt(req.params.id)
 
   const competitionType = await repository.update(req.body.sanitizedInput, id)
 
@@ -57,7 +56,7 @@ export async function update(req: Request, res: Response) {
 }
 
 export async function remove(req: Request, res: Response) {
-  const id = req.params.id
+  const id = parseInt(req.params.id)
 
   const competitionType = await repository.delete({ id })
 

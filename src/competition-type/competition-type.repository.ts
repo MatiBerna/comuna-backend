@@ -8,7 +8,7 @@ export class CompetitionTypeRepository implements Repository<CompetitionType> {
   public async findAll(): Promise<CompetitionType[] | undefined> {
     return competitionTypes
   }
-  public async findOne(item: { id: string }): Promise<CompetitionType | undefined> {
+  public async findOne(item: { id: number }): Promise<CompetitionType | undefined> {
     return competitionTypes.find((competitionTypes: CompetitionType) => competitionTypes.id === item.id)
   }
 
@@ -17,7 +17,7 @@ export class CompetitionTypeRepository implements Repository<CompetitionType> {
     return item
   }
 
-  public update(item: CompetitionType, oldId: string): Promise<CompetitionType | undefined> {
+  public update(item: CompetitionType, oldId: number): Promise<CompetitionType | undefined> {
     const competitionTypeIndex = competitionTypes.findIndex((competitionType: CompetitionType) => competitionType.id === oldId)
 
     if (competitionTypeIndex !== -1) {
@@ -26,7 +26,7 @@ export class CompetitionTypeRepository implements Repository<CompetitionType> {
     return competitionTypes[competitionTypeIndex]
   }
 
-  public delete(item: { id: string }): Promise<CompetitionType> | undefined {
+  public delete(item: { id: number }): Promise<CompetitionType> | undefined {
     const competitionTypeIndex = competitionTypes.findIndex((competitionType: CompetitionType) => competitionType.id === item.id)
 
     if (competitionTypeIndex !== -1) {
