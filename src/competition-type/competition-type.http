@@ -3,12 +3,13 @@ GET http://localhost:3000/api/competition-type
 
 ### obtener un tipo de competicion por su id
 
-GET http://localhost:3000/api/competition-type/cd
+GET http://localhost:3000/api/competition-type/2
 
 ###añado un tipo de competencia nuevo
 POST http://localhost:3000/api/competition-type
 Content-Type: application/json
 
+#se puede ver que no afecta 
 {
   "id": "lvda",
   "description": "Levantamiento de dedo anular",
@@ -16,7 +17,7 @@ Content-Type: application/json
 }
 
 ### modifico totalmente un tipo de competencia
-PUT http://localhost:3000/api/competition-type/lmd
+PUT http://localhost:3000/api/competition-type/7
 Content-Type: application/json
 
 {
@@ -27,7 +28,7 @@ Content-Type: application/json
 
 
 ### modifico parcialmente un tipo de competencia
-PATCH  http://localhost:3000/api/competition-type/lmm
+PATCH  http://localhost:3000/api/competition-type/7
 Content-Type: application/json
 
 {
@@ -35,4 +36,4 @@ Content-Type: application/json
 }
 
 ### elimino una persona
-DELETE http://localhost:3000/api/competition-type/lmmq
+DELETE http://localhost:3000/api/competition-type/

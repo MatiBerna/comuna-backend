@@ -1,3 +1,9 @@
 export class CompetitionType {
-  constructor(public id: string, public description: string, public rules: string) {}
+  public static lastId = 4
+  public id: number
+
+  constructor(public description: string, public rules: string) {
+    CompetitionType.lastId++
+    this.id = CompetitionType.lastId
+  }
 }
