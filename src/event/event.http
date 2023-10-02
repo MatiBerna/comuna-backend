@@ -1,0 +1,40 @@
+### obterner todos los eventos
+GET http://localhost:3000/api/event
+
+### obtener un evento por su id
+
+GET http://localhost:3000/api/event/a8e8e6a0-361e-47f3-b0b0-03cf6b0e5921
+
+###añado un evento nuevo
+POST http://localhost:3000/api/event
+Content-Type: application/json
+
+{
+  "nro": 5,
+  "descripcion": "Congreso de abogados",
+  "fecha_hora_ini": "2023-10-17T14:00:00Z",
+  "fecha_hora_fin": "2023-10-17T16:00:00Z"
+}
+
+### modifico totalmente un evento
+PUT http://localhost:3000/api/event/a8e8e6a0-361e-47f3-b0b0-03cf6b0e5921
+Content-Type: application/json
+
+{
+  "nro": 2,
+  "descripcion": "Congreso de Medicos",
+  "fecha_hora_ini": "2023-10-17T14:00:00Z",
+  "fecha_hora_fin": "2023-10-17T16:00:00Z"
+  }
+
+
+### modifico parcialmente un evento
+PATCH  http://localhost:3000/api/event/a8e8e6a0-361e-47f3-b0b0-03cf6b0e5921
+Content-Type: application/json
+
+{
+  "nro": 7
+  }
+
+### elimino un evento
+DELETE http://localhost:3000/api/event/a8e8e6a0-361e-47f3-b0b0-03cf6b0e5921

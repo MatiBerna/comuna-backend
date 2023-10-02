@@ -1,0 +1,23 @@
+[
+  {
+    "nro": 1,
+    "descripcion": "Reunión de equipo",
+    "fecha_hora_ini": "2023-10-10T10:00:00Z",
+    "fecha_hora_fin": "2023-10-10T12:00:00Z",
+    "id": "c7b62a46-50df-4d2b-bfbe-1a5991465c65"
+  },
+  {
+    "nro": 2,
+    "descripcion": "Entrenamiento de desarrollo",
+    "fecha_hora_ini": "2023-10-15T14:00:00Z",
+    "fecha_hora_fin": "2023-10-15T16:00:00Z",
+    "id": "a8e8e6a0-361e-47f3-b0b0-03cf6b0e5921"
+  },
+  {
+    "nro": 3,
+    "descripcion": "Presentación de ventas",
+    "fecha_hora_ini": "2023-10-20T15:30:00Z",
+    "fecha_hora_fin": "2023-10-20T17:00:00Z",
+    "id": "f4f2a5d7-7837-4a4d-b6c1-2fe7c648fc9f"
+  }
+]
