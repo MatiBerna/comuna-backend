@@ -60,7 +60,9 @@ export async function update(req: Request, res: Response) {
   const repeatedPerson = await repository.findByDni({ dni: req.body.sanitizedInput.dni })
 
   if (repeatedPerson !== undefined) {
-    return res.status(400).send({ message: 'DNI repeated' })
+    if (repeatedPerson.id !== req.body.sanitizedInput.id) {
+      return res.status(400).send({ message: 'DNI repeated' })
+    }
   }
 
   const person = await repository.update(req.body.sanitizedInput)
