@@ -43,4 +43,4 @@ Content-Type: application/json
 }
 
 ### elimino una persona
-DELETE http://localhost:3000/api/person/652482d43db75df0248caec4
+DELETE http://localhost:3000/api/person/65258c6a3debfb6d182e9dbb
