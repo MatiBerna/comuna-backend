@@ -4,8 +4,6 @@ import { CompetitionType } from './competition-type.entity'
 import { db } from '../shared/db/conn.js'
 import { ObjectId } from 'mongodb'
 
-const competitionTypesArray = readJSON('../src/competition-type/competition-type.json')
-
 const competitionTypes = db.collection<CompetitionType>('competition_types')
 
 export class CompetitionTypeRepository implements Repository<CompetitionType> {
