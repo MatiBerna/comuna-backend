@@ -3,7 +3,7 @@ GET http://localhost:3000/api/person
 
 ### obtener una persona por su id
 
-GET http://localhost:3000/api/person/6ba7b810-9dad-11d1-80b4-00c04fd430c8
+GET http://localhost:3000/api/person/652325664ddfaaa837f1ee33
 
 ###añado una persona nueva
 POST http://localhost:3000/api/person
@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 
 ### modifico totalmente una persona
-PUT http://localhost:3000/api/person/550e8400-e29b-41d4-a716-446655440000
+PUT http://localhost:3000/api/person/652325664ddfaaa837f1ee33
 Content-Type: application/json
 
 {
@@ -33,7 +33,7 @@ Content-Type: application/json
 
 
 ### modifico parcialmente una persona
-PATCH  http://localhost:3000/api/person/550e8400-e29b-41d4-a716-446655440000
+PATCH  http://localhost:3000/api/person/652325664ddfaaa837f1ee33
 Content-Type: application/json
 
 {
@@ -43,4 +43,4 @@ Content-Type: application/json
 }
 
 ### elimino una persona
-DELETE http://localhost:3000/api/person/550e8400-e29b-41d4-a716-446655440000
+DELETE http://localhost:3000/api/person/652482d43db75df0248caec4
