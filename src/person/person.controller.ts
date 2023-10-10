@@ -60,12 +60,13 @@ export async function update(req: Request, res: Response) {
   const repeatedPerson = await repository.findByDni({ dni: req.body.sanitizedInput.dni })
 
   if (repeatedPerson !== undefined) {
-    if (repeatedPerson.id !== req.body.sanitizedInput.id) {
+    //PROBABLEMENTE NO FUNCIONE Y DEBA IMPORTAR OBJECTID PARA TRANSFORMARLO A STRING O USAR UN TOSTRING
+    if (repeatedPerson._id?.toString() !== req.body.sanitizedInput.id) {
       return res.status(400).send({ message: 'DNI repeated' })
     }
   }
 
-  const person = await repository.update(req.body.sanitizedInput)
+  const person = await repository.update(req.body.sanitizedInput, req.params.id)
 
   if (person === undefined) {
     return res.status(404).send({ message: 'Person not found' })

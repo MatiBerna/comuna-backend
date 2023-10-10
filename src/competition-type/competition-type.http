@@ -3,7 +3,7 @@ GET http://localhost:3000/api/competition-type
 
 ### obtener un tipo de competicion por su id
 
-GET http://localhost:3000/api/competition-type/2
+GET http://localhost:3000/api/competition-type/6524b0b2a1b2ef79b1d2bb07
 
 ###añado un tipo de competencia nuevo
 POST http://localhost:3000/api/competition-type
@@ -17,7 +17,7 @@ Content-Type: application/json
 }
 
 ### modifico totalmente un tipo de competencia
-PUT http://localhost:3000/api/competition-type/7
+PUT http://localhost:3000/api/competition-type/6524b0b2a1b2ef79b1d2bb07
 Content-Type: application/json
 
 {
@@ -28,7 +28,7 @@ Content-Type: application/json
 
 
 ### modifico parcialmente un tipo de competencia
-PATCH  http://localhost:3000/api/competition-type/7
+PATCH  http://localhost:3000/api/competition-type/6524ae5d44399070ae4b147d
 Content-Type: application/json
 
 {
@@ -36,4 +36,4 @@ Content-Type: application/json
 }
 
 ### elimino una persona
-DELETE http://localhost:3000/api/competition-type/
+DELETE http://localhost:3000/api/competition-type/6524b1342a597dc8ac4dd019
