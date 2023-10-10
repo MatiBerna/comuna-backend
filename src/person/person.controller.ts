@@ -60,7 +60,6 @@ export async function update(req: Request, res: Response) {
   const repeatedPerson = await repository.findByDni({ dni: req.body.sanitizedInput.dni })
 
   if (repeatedPerson !== undefined) {
-    //PROBABLEMENTE NO FUNCIONE Y DEBA IMPORTAR OBJECTID PARA TRANSFORMARLO A STRING O USAR UN TOSTRING
     if (repeatedPerson._id?.toString() !== req.body.sanitizedInput.id) {
       return res.status(400).send({ message: 'DNI repeated' })
     }
@@ -84,4 +83,17 @@ export async function remove(req: Request, res: Response) {
     return res.status(404).send({ message: 'Person not found' })
   }
   return res.status(200).send({ message: 'Person deleted', data: person })
+}
+
+export async function validateDni(req: Request, res: Response) {
+  req.body.sanitizedInput.id = req.params.id
+
+  const repeatedPerson = await repository.findByDni({ dni: req.body.sanitizedInput.dni })
+
+  if (repeatedPerson !== undefined) {
+    if (repeatedPerson._id?.toString() !== req.body.sanitizedInput.id) {
+      return res.status(400).send({ message: 'DNI repeated', data: false })
+    }
+  }
+  return res.status(200).send({ data: true })
 }
