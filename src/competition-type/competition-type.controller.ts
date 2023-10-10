@@ -25,7 +25,7 @@ export async function findAll(req: Request, res: Response) {
 }
 
 export async function findOne(req: Request, res: Response) {
-  const id = parseInt(req.params.id)
+  const id = req.params.id
   const competitionType = await repository.findOne({ id })
 
   if (!competitionType) {
@@ -44,7 +44,7 @@ export async function add(req: Request, res: Response) {
 }
 
 export async function update(req: Request, res: Response) {
-  const id = parseInt(req.params.id)
+  const id = req.params.id
 
   const competitionType = await repository.update(req.body.sanitizedInput, id)
 
@@ -56,7 +56,7 @@ export async function update(req: Request, res: Response) {
 }
 
 export async function remove(req: Request, res: Response) {
-  const id = parseInt(req.params.id)
+  const id = req.params.id
 
   const competitionType = await repository.delete({ id })
 

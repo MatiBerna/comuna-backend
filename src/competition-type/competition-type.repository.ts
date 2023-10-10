@@ -1,38 +1,44 @@
 import { Repository } from '../shared/repository.js'
 import { readJSON } from '../utils.js'
 import { CompetitionType } from './competition-type.entity'
+import { db } from '../shared/db/conn.js'
+import { ObjectId } from 'mongodb'
 
-const competitionTypes = readJSON('../src/competition-type/competition-type.json')
+const competitionTypes = db.collection<CompetitionType>('competition_types')
 
 export class CompetitionTypeRepository implements Repository<CompetitionType> {
   public async findAll(): Promise<CompetitionType[] | undefined> {
-    return competitionTypes
+    return await competitionTypes.find().toArray()
   }
-  public async findOne(item: { id: number }): Promise<CompetitionType | undefined> {
-    return competitionTypes.find((competitionTypes: CompetitionType) => competitionTypes.id === item.id)
+  public async findOne(item: { id: string }): Promise<CompetitionType | undefined> {
+    try {
+      const _id = new ObjectId(item.id)
+      return (await competitionTypes.findOne({ _id })) || undefined
+    } catch (err) {
+      return undefined
+    }
   }
 
   public async add(item: CompetitionType): Promise<CompetitionType | undefined> {
-    competitionTypes.push(item)
+    item._id = (await competitionTypes.insertOne(item)).insertedId
     return item
   }
 
-  public update(item: CompetitionType, oldId: number): Promise<CompetitionType | undefined> {
-    const competitionTypeIndex = competitionTypes.findIndex((competitionType: CompetitionType) => competitionType.id === oldId)
-
-    if (competitionTypeIndex !== -1) {
-      competitionTypes[competitionTypeIndex] = { ...competitionTypes[competitionTypeIndex], ...item }
+  public async update(item: CompetitionType, oldId: string): Promise<CompetitionType | undefined> {
+    try {
+      const _id = new ObjectId(oldId)
+      return (await competitionTypes.findOneAndUpdate({ _id }, { $set: item }, { returnDocument: 'after' })) || undefined
+    } catch (err) {
+      return undefined
     }
-    return competitionTypes[competitionTypeIndex]
   }
 
-  public delete(item: { id: number }): Promise<CompetitionType> | undefined {
-    const competitionTypeIndex = competitionTypes.findIndex((competitionType: CompetitionType) => competitionType.id === item.id)
-
-    if (competitionTypeIndex !== -1) {
-      const deletedCompetitionType = competitionTypes[competitionTypeIndex]
-      competitionTypes.splice(competitionTypeIndex, 1)
-      return deletedCompetitionType
+  public async delete(item: { id: string }): Promise<CompetitionType | undefined> {
+    try {
+      const _id = new ObjectId(item.id)
+      return (await competitionTypes.findOneAndDelete({ _id })) || undefined
+    } catch (err) {
+      return undefined
     }
   }
 }

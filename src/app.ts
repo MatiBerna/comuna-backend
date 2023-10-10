@@ -1,9 +1,17 @@
 import express from 'express'
 import { personRouter } from './person/person.routes.js'
 import { competitionTypeRouter } from './competition-type/competition-type.routes.js'
+import cors from 'cors'
 
 const app = express()
 app.use(express.json())
+app.use(
+  cors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  })
+)
 
 app.use('/api/person', personRouter)
 app.use('/api/competition-type', competitionTypeRouter)

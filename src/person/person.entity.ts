@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto'
+import { ObjectId } from 'mongodb'
 
 export class Person {
   constructor(
@@ -8,6 +9,6 @@ export class Person {
     public phone: string | undefined,
     public email: string,
     public birthdate: Date,
-    public id = randomUUID()
+    public _id?: ObjectId
   ) {}
 }
