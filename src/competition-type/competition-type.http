@@ -7,17 +7,18 @@ GET http://localhost:3000/api/competition-type/6524b0b2a1b2ef79b1d2bb07
 
 ###añado un tipo de competencia nuevo
 POST http://localhost:3000/api/competition-type
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTI4ODVlYzA1YmVhYTI4ZmU3NGUwYmIiLCJpYXQiOjE2OTcyNDExODQsImV4cCI6MTY5NzI0ODM4NH0.f-fI0LaelawbiLSsbHJwuh7XAZPCbOi0MzjD1kE_8vg
 Content-Type: application/json
 
 #se puede ver que no afecta 
 {
-  "id": "lvda",
   "description": "Levantamiento de dedo anular",
   "rules": "No se puede levantar un dedo que no sea el anular, si lo hace, quedará descalificado. Gana el que levante mas veces el dedo anular"
 }
 
 ### modifico totalmente un tipo de competencia
-PUT http://localhost:3000/api/competition-type/6524b0b2a1b2ef79b1d2bb07
+PUT http://localhost:3000/api/competition-type/6529db6ef2fe0cd8b251fa3b
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTI4ODVlYzA1YmVhYTI4ZmU3NGUwYmIiLCJpYXQiOjE2OTcyNDExODQsImV4cCI6MTY5NzI0ODM4NH0.f-fI0LaelawbiLSsbHJwuh7XAZPCbOi0MzjD1kE_8vg
 Content-Type: application/json
 
 {
@@ -28,7 +29,8 @@ Content-Type: application/json
 
 
 ### modifico parcialmente un tipo de competencia
-PATCH  http://localhost:3000/api/competition-type/6524ae5d44399070ae4b147d
+PATCH  http://localhost:3000/api/competition-type/6529db6ef2fe0cd8b251fa3b
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTI4ODVlYzA1YmVhYTI4ZmU3NGUwYmIiLCJpYXQiOjE2OTcyNDExODQsImV4cCI6MTY5NzI0ODM4NH0.f-fI0LaelawbiLSsbHJwuh7XAZPCbOi0MzjD1kE_8vg
 Content-Type: application/json
 
 {
@@ -36,4 +38,5 @@ Content-Type: application/json
 }
 
 ### elimino una persona
-DELETE http://localhost:3000/api/competition-type/6524b1342a597dc8ac4dd019
+DELETE http://localhost:3000/api/competition-type/6529db6ef2fe0cd8b251fa3b
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTI4ODVlYzA1YmVhYTI4ZmU3NGUwYmIiLCJpYXQiOjE2OTcyNDExODQsImV4cCI6MTY5NzI0ODM4NH0.f-fI0LaelawbiLSsbHJwuh7XAZPCbOi0MzjD1kE_8vg

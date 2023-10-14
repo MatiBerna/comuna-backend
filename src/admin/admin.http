@@ -1,0 +1,26 @@
+
+GET http://localhost:3000/api/admin
+
+### obtener un admin
+GET http://localhost:3000/api/admin/65288264d47fbd72b90b119c
+
+### añadir un admin
+post http://localhost:3000/api/admin
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "1234"
+}
+
+### modifico un admin
+PUT http://localhost:3000/api/admin/652885ce05beaa28fe74e0ba
+Content-Type: application/json
+
+{
+  "username": "oldAdmin",
+  "password": "cookies"
+}
+
+### elimino un admin
+DELETE http://localhost:3000/api/admin/652842f5486a20dc163bd5c0

@@ -1,6 +1,6 @@
-import { randomUUID } from 'crypto'
 import { ObjectId } from 'mongodb'
 
+//TODO: agregar password a todas las partes que se use persona
 export class Person {
   constructor(
     public dni: string,
@@ -9,6 +9,7 @@ export class Person {
     public phone: string | undefined,
     public email: string,
     public birthdate: Date,
+    public password: string,
     public _id?: ObjectId
   ) {}
 }
