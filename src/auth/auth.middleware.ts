@@ -13,8 +13,11 @@ export async function checkAdminAuth(req: Request, res: Response, next: NextFunc
   try {
     const token = String(req.headers.authorization?.split(' ').pop())
     const tokenData = (await verifyToken(token)) as JwtPayload
+    var adminData: Admin | undefined = undefined
 
-    const adminData = await adminRepository.findOne({ id: tokenData._id })
+    if (tokenData) {
+      adminData = await adminRepository.findOne({ id: tokenData._id })
+    }
 
     if (!adminData) {
       return res.status(409).send({ message: 'No tienes permiso' })
@@ -31,8 +34,11 @@ export async function checkPersonAuth(req: Request, res: Response, next: NextFun
   try {
     const token = String(req.headers.authorization?.split(' ').pop())
     const tokenData = (await verifyToken(token)) as JwtPayload
+    var personData: Person | undefined = undefined
 
-    const personData = await personRepository.findOne({ id: tokenData._id })
+    if (tokenData) {
+      personData = await personRepository.findOne({ id: tokenData._id })
+    }
 
     if (!personData) {
       return res.status(409).send({ message: 'No tienes permiso' })
