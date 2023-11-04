@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { add, findAll, findOne, remove, sanitizePersonInput, update } from './person.controller.js'
+import { checkAdminAuth } from '../auth/auth.middleware.js'
 
 export const personRouter = Router()
 
