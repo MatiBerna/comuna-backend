@@ -15,7 +15,7 @@ export async function login(req: Request, res: Response) {
     console.log(user)
 
     if (!user) {
-      return res.status(404).send({ message: 'Nombre de usuario o contraseña incorrectos' })
+      return res.status(409).send({ message: 'Nombre de usuario o contraseña incorrectos' })
     }
 
     const checkPassword = await comparePassword(password, user.password)
@@ -39,7 +39,7 @@ export async function loginAdmin(req: Request, res: Response) {
   const admin = await adminRepository.findByUsername({ username })
 
   if (!admin) {
-    return res.status(404).send({ message: 'Nombre de usuario o contraseña invalidos' })
+    return res.status(409).send({ message: 'Nombre de usuario o contraseña invalidos' })
   }
 
   const checkPassword = await comparePassword(password, admin?.password)

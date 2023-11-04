@@ -1,7 +1,6 @@
 ### obterner todas las personas
 GET http://localhost:3000/api/person
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTI4ODVlYzA1YmVhYTI4ZmU3NGUwYmIiLCJpYXQiOjE2OTcyNDExODQsImV4cCI6MTY5NzI0ODM4NH0.f-fI0LaelawbiLSsbHJwuh7XAZPCbOi0MzjD1kE_8vg
-
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTI4ODVlYzA1YmVhYTI4ZmU3NGUwYmIiLCJpYXQiOjE2OTg3ODYxMjIsImV4cCI6MTY5ODc5MzMyMn0.D96OXVJWq5FR85xUX_x7wUZjrNPAOJ7fFsnQBXIm0Po
 ### 
 GET http://localhost:3000/api/person/652556884e3084b09f6daf5d
 
@@ -44,4 +43,4 @@ Content-Type: application/json
 }
 
 ### elimino una persona
-DELETE http://localhost:3000/api/person/65282f2bda831c876c4c2a4d
+DELETE http://localhost:3000/api/person/6544f457903d5487eb9a7702

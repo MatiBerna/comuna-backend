@@ -27,7 +27,7 @@ export function sanitizePersonInput(req: Request, res: Response, next: NextFunct
 
 export async function findAll(req: Request, res: Response) {
   const persons = await repository.findAll()
-  res.json({ data: persons })
+  res.json(persons)
 }
 
 export async function findOne(req: Request, res: Response) {
@@ -92,7 +92,7 @@ export async function update(req: Request, res: Response) {
     return res.status(404).send({ message: 'Person not found' })
   }
 
-  return res.status(200).send({ message: 'Person updated', data: person })
+  return res.status(200).json(person)
 }
 
 export async function remove(req: Request, res: Response) {
