@@ -16,7 +16,7 @@ export async function checkAdminAuth(req: Request, res: Response, next: NextFunc
     var adminData: Admin | undefined = undefined
 
     if (tokenData) {
-      adminData = await adminRepository.findOne({ id: tokenData._id })
+      adminData = await adminRepository.findOne({ id: tokenData.user._id })
     }
 
     if (!adminData) {
@@ -26,7 +26,7 @@ export async function checkAdminAuth(req: Request, res: Response, next: NextFunc
     }
   } catch (err) {
     console.log(err)
-    res.status(409).send({ message: 'Por acá no pasas mi rey' })
+    res.status(409).send({ message: 'token incorrecto o inexistente' })
   }
 }
 
@@ -37,7 +37,7 @@ export async function checkPersonAuth(req: Request, res: Response, next: NextFun
     var personData: Person | undefined = undefined
 
     if (tokenData) {
-      personData = await personRepository.findOne({ id: tokenData._id })
+      personData = await personRepository.findOne({ id: tokenData.user._id })
     }
 
     if (!personData) {
@@ -47,6 +47,6 @@ export async function checkPersonAuth(req: Request, res: Response, next: NextFun
     }
   } catch (err) {
     console.log(err)
-    res.status(409).send({ message: 'Por acá no pasas mi rey' })
+    res.status(409).send({ message: 'token incorrecto o inexistente' })
   }
 }

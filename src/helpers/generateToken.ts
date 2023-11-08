@@ -11,7 +11,7 @@ export async function tokenSign(user: Person) {
 
   return sign(
     {
-      _id: user._id,
+      user: user,
     },
     secret_key,
     {
@@ -25,7 +25,7 @@ export async function adminTokenSign(user: Admin) {
 
   return sign(
     {
-      _id: user._id,
+      user: user,
     },
     secret_key,
     {

@@ -21,7 +21,7 @@ export function sanitizePersonInput(req: Request, res: Response, next: NextFunct
 
 export async function findAll(req: Request, res: Response) {
   const competitionTypes = await repository.findAll()
-  res.json({ data: competitionTypes })
+  res.json(competitionTypes)
 }
 
 export async function findOne(req: Request, res: Response) {
@@ -31,7 +31,7 @@ export async function findOne(req: Request, res: Response) {
   if (!competitionType) {
     return res.status(404).send({ message: 'Competition Type not found' })
   }
-  res.json({ data: competitionType })
+  res.json(competitionType)
 }
 
 export async function add(req: Request, res: Response) {

@@ -1,8 +1,10 @@
 import { Request, Response } from 'express'
 import { PersonRepository } from '../person/person.repository.js'
 import { comparePassword } from '../helpers/handleBcrypt.js'
-import { adminTokenSign, tokenSign } from '../helpers/generateToken.js'
+import { adminTokenSign, tokenSign, verifyToken } from '../helpers/generateToken.js'
 import { AdminRepository } from '../admin/admin.repository.js'
+import { JwtPayload } from 'jsonwebtoken'
+import { Admin } from '../admin/admin.entity.js'
 
 const personRepository = new PersonRepository()
 const adminRepository = new AdminRepository()
@@ -42,12 +44,11 @@ export async function loginAdmin(req: Request, res: Response) {
     return res.status(409).send({ message: 'Nombre de usuario o contraseña invalidos' })
   }
 
-  const checkPassword = await comparePassword(password, admin?.password)
-
-  const tokenSession = await adminTokenSign(admin)
+  const checkPassword = await comparePassword(password, admin?.password!)
 
   if (checkPassword) {
     const { password, ...adminWPass } = admin
+    const tokenSession = await adminTokenSign(adminWPass)
     return res.json({ data: adminWPass, tokenSession })
   } else {
     return res.status(409).send({ message: 'Nombre de usuario o contraseña incorrectos' })
