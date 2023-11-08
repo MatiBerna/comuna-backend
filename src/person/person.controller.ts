@@ -29,13 +29,13 @@ export function sanitizePersonInput(req: Request, res: Response, next: NextFunct
 }
 
 export async function findAll(req: Request, res: Response) {
-  const persons = await Person.find()
+  const persons = await Person.find().select('-password')
   res.json(persons)
 }
 
 export async function findOne(req: Request, res: Response) {
   try {
-    const person = await Person.findById(req.params.id)
+    const person = await Person.findById(req.params.id).select('-password')
 
     if (!person) {
       return res.status(404).send({ message: 'Person not found' })
@@ -60,10 +60,11 @@ export async function add(req: Request, res: Response) {
     personInput.password = hashedPassword
   }
 
-  let person: IPerson
   try {
-    person = await personInput.save()
-    return res.status(201).json({ message: 'Person created', data: person })
+    const person = await personInput.save()
+    const personObject = person.toObject()
+    const { password, ...personWPassword } = personObject
+    return res.status(201).json({ message: 'Person created', data: personWPassword })
   } catch (err) {
     const mongoErr: MongoServerError = err as MongoServerError
     if (mongoErr.code === 11000) {
@@ -72,6 +73,8 @@ export async function add(req: Request, res: Response) {
       } else {
         return res.status(400).send({ message: 'DNI Repetido' })
       }
+    } else if (mongoErr.name === 'ValidationError') {
+      return res.status(400).send({ message: 'Falta un atributo requerido' })
     } else {
       console.log(err)
       return res.status(500).send({ message: 'Error interno del servidor de Datos' })
@@ -82,7 +85,7 @@ export async function add(req: Request, res: Response) {
 export async function update(req: Request, res: Response) {
   const id = req.params.id
   try {
-    const person = await Person.findByIdAndUpdate(id, req.body, { new: true })
+    const person = await Person.findByIdAndUpdate(id, req.body, { new: true }).select('-password')
 
     if (!person) {
       return res.status(404).send({ message: 'Person not found' })

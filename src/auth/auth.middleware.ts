@@ -1,22 +1,23 @@
 import { NextFunction, Request, Response } from 'express'
-import { Admin } from '../admin/admin.entity.js'
+import Admin from '../admin/admin.model.js'
 import Person, { IPerson } from '../person/person.model.js'
 import { verifyToken } from '../helpers/generateToken.js'
 //import { PersonRepository } from '../person/person.repository.js'
-import { AdminRepository } from '../admin/admin.repository.js'
+//import { AdminRepository } from '../admin/admin.repository.js'
 import { JwtPayload } from 'jsonwebtoken'
+import { IAdmin } from '../admin/admin.model.js'
 
 //const personRepository = new PersonRepository()
-const adminRepository = new AdminRepository()
+//const adminRepository = new AdminRepository()
 
 export async function checkAdminAuth(req: Request, res: Response, next: NextFunction) {
   try {
     const token = String(req.headers.authorization?.split(' ').pop())
     const tokenData = (await verifyToken(token)) as JwtPayload
-    var adminData: Admin | undefined = undefined
+    var adminData: IAdmin | undefined = undefined
 
     if (tokenData) {
-      adminData = await adminRepository.findOne({ id: tokenData.user._id })
+      adminData = (await Admin.findById(tokenData.user._id)) || undefined
     }
 
     if (!adminData) {

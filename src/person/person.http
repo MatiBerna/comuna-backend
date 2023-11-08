@@ -2,7 +2,7 @@
 GET http://localhost:3000/api/person
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTI4ODVlYzA1YmVhYTI4ZmU3NGUwYmIiLCJpYXQiOjE2OTg3ODYxMjIsImV4cCI6MTY5ODc5MzMyMn0.D96OXVJWq5FR85xUX_x7wUZjrNPAOJ7fFsnQBXIm0Po
 ### 
-GET http://localhost:3000/api/person/652556884e3084b09f6daf5d
+GET http://localhost:3000/api/person/65258a4829f08db9498afe2d
 
 ###añado una persona nueva
 POST http://localhost:3000/api/person
@@ -43,4 +43,4 @@ Content-Type: application/json
 }
 
 ### elimino una persona
-DELETE http://localhost:3000/api/person/654bac859d13aa55326a141
+DELETE http://localhost:3000/api/person/654bfdcefd7de634bea07255

@@ -4,8 +4,11 @@ import { competitionTypeRouter } from './competition-type/competition-type.route
 import cors from 'cors'
 import { authRouter } from './auth/auth.routes.js'
 import { adminRouter } from './admin/admin.routes.js'
+import { dbConect } from './shared/db/conn.js'
 
 const app = express()
+dbConect()
+
 app.use(express.json())
 app.use(
   cors({

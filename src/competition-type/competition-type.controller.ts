@@ -1,6 +1,7 @@
 import { Response, Request, NextFunction } from 'express'
 //import { CompetitionTypeRepository } from './competition-type.repository.js'
 import CompetitionType from './competition-type.model.js'
+import { MongoServerError } from 'mongodb'
 
 //const repository = new CompetitionTypeRepository()
 
@@ -32,8 +33,17 @@ export async function add(req: Request, res: Response) {
   //const competitionTypeInput = new CompetitionType(input.description, input.rules)
   const competitionTypeInput = new CompetitionType(req.body)
 
-  const competitionType = await competitionTypeInput.save()
-  return res.status(201).json({ message: 'Competition Type created', data: competitionType })
+  try {
+    const competitionType = await competitionTypeInput.save()
+    return res.status(201).json({ message: 'Competition Type created', data: competitionType })
+  } catch (err) {
+    const mongoErr: MongoServerError = err as MongoServerError
+    if (mongoErr.name === 'ValidationError') {
+      return res.status(400).send({ message: 'Falta un atributo requerido' })
+    } else {
+      return res.status(500).send({ message: 'Error interno del servidor' })
+    }
+  }
 }
 
 export async function update(req: Request, res: Response) {
