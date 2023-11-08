@@ -1,12 +1,13 @@
 import jwt from 'jsonwebtoken'
-import { Person } from '../person/person.entity'
+//import { Person } from '../person/person.model'
 const { sign, verify, decode } = jwt
 import * as dotenv from 'dotenv'
 import { Admin } from '../admin/admin.entity'
+import { IPerson } from '../person/person.model'
 
 dotenv.config()
 
-export async function tokenSign(user: Person) {
+export async function tokenSign(user: IPerson) {
   const secret_key: jwt.Secret = String(process.env.JWT_SECRET)
 
   return sign(
