@@ -32,7 +32,7 @@ export async function add(req: Request, res: Response) {
     return res.status(404).send({ message: 'Nombre de usuario en uso' })
   }
 
-  const hashedPassword = await hash(adminInput.password, 10)
+  const hashedPassword = await hash(adminInput.password!, 10)
   adminInput.password = hashedPassword
 
   const admin = await repository.add(adminInput)
