@@ -1,9 +1,4 @@
-import { ObjectId } from 'mongodb'
 import { Schema, model } from 'mongoose'
-
-// export class Admin {
-//   constructor(public username: string, public password?: string, public _id?: ObjectId) {}
-// }
 
 export interface IAdmin {
   username: string

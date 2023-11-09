@@ -1,32 +1,7 @@
 import { Response, Request, NextFunction } from 'express'
-//import { PersonRepository } from './person.repository.js'
-//import { Person } from './person.model.js'
 import { hash } from 'bcrypt-ts'
 import Person, { IPerson } from './person.model.js'
-import mongoose, { CastError } from 'mongoose'
 import { MongoServerError } from 'mongodb'
-
-//const repository = new PersonRepository()
-
-export function sanitizePersonInput(req: Request, res: Response, next: NextFunction) {
-  req.body.sanitizedInput = {
-    dni: req.body.dni,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    phone: req.body.phone,
-    email: req.body.email,
-    birthdate: req.body.birthdate,
-    password: req.body.password,
-  }
-
-  Object.keys(req.body.sanitizedInput).forEach((key) => {
-    if (req.body.sanitizedInput[key] === undefined) {
-      delete req.body.sanitizedInput[key]
-    }
-  })
-
-  next()
-}
 
 export async function findAll(req: Request, res: Response) {
   const persons = await Person.find().select('-password')
@@ -114,7 +89,6 @@ export async function update(req: Request, res: Response) {
 export async function remove(req: Request, res: Response) {
   const id = req.params.id
 
-  //const person = await repository.delete({ id })
   try {
     const person = await Person.findByIdAndDelete(id)
 
@@ -128,16 +102,3 @@ export async function remove(req: Request, res: Response) {
     }
   }
 }
-
-// export async function validateDni(req: Request, res: Response) {
-//   req.body.sanitizedInput.id = req.params.id
-
-//   const repeatedPerson = await repository.findByDni({ dni: req.body.sanitizedInput.dni })
-
-//   if (repeatedPerson !== undefined) {
-//     if (repeatedPerson._id?.toString() !== req.body.sanitizedInput.id) {
-//       return res.status(400).send({ message: 'DNI repeated', data: false })
-//     }
-//   }
-//   return res.status(200).send({ data: true })
-// }

@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-//import { Person } from '../person/person.model'
 const { sign, verify, decode } = jwt
 import * as dotenv from 'dotenv'
 import { IAdmin } from '../admin/admin.model'
