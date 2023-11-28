@@ -2,30 +2,30 @@
 GET http://localhost:3000/api/person
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTI4ODVlYzA1YmVhYTI4ZmU3NGUwYmIiLCJpYXQiOjE2OTg3ODYxMjIsImV4cCI6MTY5ODc5MzMyMn0.D96OXVJWq5FR85xUX_x7wUZjrNPAOJ7fFsnQBXIm0Po
 ### 
-GET http://localhost:3000/api/person/652556884e3084b09f6daf5d
+GET http://localhost:3000/api/person/65258a4829f08db9498afe2d
 
 ###añado una persona nueva
 POST http://localhost:3000/api/person
 Content-Type: application/json
 
 {
-  "dni": "44857727",
+  "dni": "44857723",
   "firstName": "Matias",
   "lastName": "Bernardi",
   "phone": "3329577636",
-  "email": "matias.bernardi.1@gmail.com",
+  "email": "matias.bernardi.1@gmai.com",
   "birthdate": "2003-04-23T18:25:43.511Z",
   "password": "hola123456"
 }
 
 ### modifico totalmente una persona
-PUT http://localhost:3000/api/person/6529d8f666ff164b547d5163
+PUT http://localhost:3000/api/person/65288573d0649bcd9624844
 Content-Type: application/json
 
 {
-  "dni": "12345678",
-  "firstName": "Juana",
-  "lastName": "Pereza",
+  "dni": "44857727",
+  "firstName": "Juan",
+  "lastName": "Perez",
   "phone": "000-000-000",
   "email": "perazajuana@hotmail.coms",
   "birthdate": "1981-01-01T00:00:00.000Z"
@@ -33,7 +33,7 @@ Content-Type: application/json
 
 
 ### modifico parcialmente una persona
-PATCH  http://localhost:3000/api/person/65282f2bda831c876c4c2a4d
+PATCH  http://localhost:3000/api/person/65288573d0649bcd96248440
 Content-Type: application/json
 
 {
@@ -43,4 +43,4 @@ Content-Type: application/json
 }
 
 ### elimino una persona
-DELETE http://localhost:3000/api/person/6544f457903d5487eb9a7702
+DELETE http://localhost:3000/api/person/654bfdcefd7de634bea07255

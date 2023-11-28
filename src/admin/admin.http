@@ -9,7 +9,7 @@ post http://localhost:3000/api/admin
 Content-Type: application/json
 
 {
-  "username": "admin",
+  "username": "admina",
   "password": "1234"
 }
 

@@ -38,5 +38,5 @@ Content-Type: application/json
 }
 
 ### elimino una persona
-DELETE http://localhost:3000/api/competition-type/6529db6ef2fe0cd8b251fa3b
+DELETE http://localhost:3000/api/competition-type/6529db6ef2fe0cd8b251fa3
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTI4ODVlYzA1YmVhYTI4ZmU3NGUwYmIiLCJpYXQiOjE2OTcyNDExODQsImV4cCI6MTY5NzI0ODM4NH0.f-fI0LaelawbiLSsbHJwuh7XAZPCbOi0MzjD1kE_8vg
