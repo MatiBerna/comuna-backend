@@ -1,4 +1,4 @@
-import { Response, Request, NextFunction } from 'express'
+import { Response, Request } from 'express'
 import { hash } from 'bcrypt-ts'
 import Person, { IPerson } from './person.model.js'
 import { MongoServerError } from 'mongodb'
@@ -98,6 +98,7 @@ export async function remove(req: Request, res: Response) {
     return res.status(200).send({ message: 'Person deleted', data: person })
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {
+      console.log(err)
       return res.status(400).send({ message: 'Id invalido' })
     }
   }
