@@ -2,13 +2,8 @@ import { NextFunction, Request, Response } from 'express'
 import Admin from '../admin/admin.model.js'
 import Person, { IPerson } from '../person/person.model.js'
 import { verifyToken } from '../helpers/generateToken.js'
-//import { PersonRepository } from '../person/person.repository.js'
-//import { AdminRepository } from '../admin/admin.repository.js'
 import { JwtPayload } from 'jsonwebtoken'
 import { IAdmin } from '../admin/admin.model.js'
-
-//const personRepository = new PersonRepository()
-//const adminRepository = new AdminRepository()
 
 export async function checkAdminAuth(req: Request, res: Response, next: NextFunction) {
   try {
@@ -38,7 +33,6 @@ export async function checkPersonAuth(req: Request, res: Response, next: NextFun
     var personData: IPerson | undefined = undefined
 
     if (tokenData) {
-      //personData = await personRepository.findOne({ id: tokenData.user._id })
       personData = (await Person.findById(tokenData.user._id)) || undefined
     }
 

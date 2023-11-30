@@ -6,6 +6,7 @@ import { authRouter } from './auth/auth.routes.js'
 import { adminRouter } from './admin/admin.routes.js'
 import { dbConect } from './shared/db/conn.js'
 import { eventoRouter } from './evento/evento.routes.js'
+import { competetitionRouter } from './competition/competition.routes.js'
 
 const app = express()
 dbConect()
@@ -24,6 +25,7 @@ app.use('/api/competition-type', competitionTypeRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/evento', eventoRouter)
+app.use('/api/competition', competetitionRouter)
 
 app.use((_, res) => {
   return res.status(404).send({ mesage: 'Resourse not found' })

@@ -13,13 +13,13 @@ export async function findOne(req: Request, res: Response) {
     const person = await Person.findById(req.params.id).select('-password')
 
     if (!person) {
-      return res.status(404).send({ message: 'Person not found' })
+      return res.status(404).send({ message: 'Persona no encontrada' })
     }
 
     res.json(person)
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {
-      return res.status(400).send({ message: 'Id invalido' })
+      return res.status(404).send({ message: 'Persona no encontrada' })
     } else {
       console.log(err)
       return res.status(500).send({ message: 'Error interno del servidor de Datos' })
@@ -33,6 +33,10 @@ export async function add(req: Request, res: Response) {
   if (personInput.password) {
     const hashedPassword = await hash(personInput.password, 10)
     personInput.password = hashedPassword
+  }
+
+  if (personInput.birthdate && new Date(personInput.birthdate).toString() === 'Invalid Id') {
+    return res.status(400).send({ message: 'La fecha de nacimineto ingresada no es valida' })
   }
 
   try {
@@ -63,7 +67,11 @@ export async function update(req: Request, res: Response) {
     const person = await Person.findByIdAndUpdate(id, req.body, { new: true }).select('-password')
 
     if (!person) {
-      return res.status(404).send({ message: 'Person not found' })
+      return res.status(404).send({ message: 'Persona no encontrada' })
+    }
+
+    if (req.body.birthdate && new Date(req.body.birthdate).toString() === 'Invalid Id') {
+      return res.status(400).send({ message: 'La fecha de nacimineto ingresada no es valida' })
     }
 
     return res.status(200).json(person)
@@ -77,7 +85,7 @@ export async function update(req: Request, res: Response) {
       }
     } else {
       if (err instanceof Error && err.name === 'CastError') {
-        return res.status(400).send({ message: 'Id invalido' })
+        return res.status(404).send({ message: 'Persona no encontrada' })
       } else {
         console.log(err)
         return res.status(500).send({ message: 'Error interno del servidor de Datos' })
@@ -93,13 +101,16 @@ export async function remove(req: Request, res: Response) {
     const person = await Person.findByIdAndDelete(id)
 
     if (!person) {
-      return res.status(404).send({ message: 'Person not found' })
+      return res.status(404).send({ message: 'Persona no encontrada' })
     }
     return res.status(200).send({ message: 'Person deleted', data: person })
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {
       console.log(err)
-      return res.status(400).send({ message: 'Id invalido' })
+      return res.status(404).send({ message: 'Persona no encontrada' })
+    } else {
+      console.log(err)
+      return res.status(500).send({ message: 'Error interno del servidor de Datos' })
     }
   }
 }
