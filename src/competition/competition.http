@@ -28,13 +28,15 @@ Content-Type: application/json
 
 {
   "_idCompetitionType": "6524b0b2a1b2ef79b1d2bb07",
-  "_idEvento": "6566145214a1a83b57231c01",
+  "_idEvento": "656a4cbeefd3b1c20e4fb0cf",
   "descripcion": "Competencia de levantamiento de dedo meñique",
   "fechaHoraIni": "2023-12-24T20:00:00.000Z",
   "fechaHoraFinEstimada": "2023-12-25T06:00:00.000Z",
   "premios": "Una champagne",
   "costoInscripcion": 21
 }
+
+
 
 
 ### BORRAR

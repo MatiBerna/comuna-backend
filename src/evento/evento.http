@@ -11,9 +11,9 @@ POST http://localhost:3000/api/evento
 Content-Type: application/json
 
 {
-  "description": "Pascuas",
-  "fechaHoraIni": "2023-04-09T15:00:00.000Z",
-  "fechaHoraFin": "2023-04-10T19:00:00.000Z"
+  "description": "Navidad",
+  "fechaHoraIni": "2023-12-24T20:00:00.000Z",
+  "fechaHoraFin": "2023-12-25T06:00:00.000Z"
 }
 
 
@@ -40,4 +40,4 @@ Content-Type: application/json
 
 
 ### ELIMINA
-DELETE  http://localhost:3000/api/evento/65675ade942f41ca71c57330
+DELETE  http://localhost:3000/api/evento/656a4cbeefd3b1c20e4fb0cf

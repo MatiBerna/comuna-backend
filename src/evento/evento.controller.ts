@@ -1,6 +1,8 @@
 import { Response, Request } from 'express'
 import Evento from './evento.model.js'
 import { MongoServerError } from 'mongodb'
+import mongoose from 'mongoose'
+import Competition from '../competition/competition.model.js'
 
 export async function findAll(req: Request, res: Response) {
   const prox = req.query.prox
@@ -154,6 +156,14 @@ export async function update(req: Request, res: Response) {
 
 export async function remove(req: Request, res: Response) {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).send({ message: 'Evento no encontrado' })
+    }
+    const competenciasEvento = await Competition.find({ _idEvento: req.params.id })
+
+    if (competenciasEvento.length !== 0) {
+      return res.status(409).send({ message: 'El evento tiene competencias cargadas' })
+    }
     const evento = await Evento.findByIdAndDelete(req.params.id)
 
     if (!evento) {
