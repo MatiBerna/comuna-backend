@@ -3,7 +3,12 @@ import Evento from './evento.model.js'
 import { MongoServerError } from 'mongodb'
 
 export async function findAll(req: Request, res: Response) {
-  const eventos = await Evento.find()
+  const prox = req.query.prox
+  if (prox === 'true') {
+    const eventos = await Evento.find({ fechaHoraIni: { $gte: Date.now() } }).sort({ fechaHoraIni: 1 })
+    return res.json(eventos)
+  }
+  const eventos = await Evento.find().sort({ fechaHoraIni: 1 })
   res.json(eventos)
 }
 

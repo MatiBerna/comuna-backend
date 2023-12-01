@@ -12,8 +12,8 @@ Content-Type: application/json
 
 {
   "description": "Pascuas",
-  "fechaHoraIni": "2024-04-09T12:00:00.000Z",
-  "fechaHoraFin": "2024-04-10T00:00:00.000Z"
+  "fechaHoraIni": "2023-04-09T15:00:00.000Z",
+  "fechaHoraFin": "2023-04-10T19:00:00.000Z"
 }
 
 
