@@ -14,6 +14,10 @@ export async function add(req: Request, res: Response) {
     return res.status(400).send({ message: 'Datos incompletos' })
   }
 
+  if (!adminInput.username) {
+    return res.status(400).send({ message: 'Datos incompletos' })
+  }
+
   try {
     const admin = await adminInput.save()
     return res.status(201).json({ message: 'Admin creado', data: admin })
@@ -34,7 +38,7 @@ export async function findAll(req: Request, res: Response) {
     res.json(adminList)
   } catch (err) {
     console.log(err)
-    return res.status(500).send({ message: 'Internal server error' })
+    return res.status(500).send({ message: 'Error interno del servidor de Datos' })
   }
 }
 
@@ -43,12 +47,12 @@ export async function findOne(req: Request, res: Response) {
     const admin = await Admin.findById(req.params.id).select('-password')
 
     if (!admin) {
-      return res.status(404).send({ message: 'Admin not found' })
+      return res.status(404).send({ message: 'Admin no encontrado' })
     }
     res.json(admin)
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {
-      return res.status(400).send({ message: 'Id invalido' })
+      return res.status(404).send({ message: 'Admin no encontrado' })
     } else {
       console.log(err)
       return res.status(500).send({ message: 'Error interno del servidor de Datos' })
@@ -68,7 +72,7 @@ export async function update(req: Request, res: Response) {
     const admin = await Admin.findByIdAndUpdate(req.params.id, req.body, { new: true }).select('-password')
 
     if (!admin) {
-      return res.status(404).send({ message: 'Admin not found' })
+      return res.status(404).send({ message: 'Admin no encontrado' })
     }
 
     res.json({ message: 'Admin modificado', data: admin })
@@ -78,7 +82,7 @@ export async function update(req: Request, res: Response) {
       return res.status(400).send({ message: 'Nombre de Usuario Repetido' })
     } else {
       if (err instanceof Error && err.name === 'CastError') {
-        return res.status(400).send({ message: 'Id invalido' })
+        return res.status(404).send({ message: 'Admin no encontrado' })
       } else {
         console.log(err)
         return res.status(500).send({ message: 'Error interno del servidor de Datos' })
@@ -93,12 +97,12 @@ export async function remove(req: Request, res: Response) {
   try {
     const admin = await Admin.findByIdAndDelete(id)
     if (!admin) {
-      return res.status(404).send({ message: 'Admin not found' })
+      return res.status(404).send({ message: 'Admin no encontrado' })
     }
     return res.status(200).send({ message: 'Admin deleted', data: admin })
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {
-      return res.status(400).send({ message: 'Id invalido' })
+      return res.status(404).send({ message: 'Admin no encontrado' })
     }
   }
 }

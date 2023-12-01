@@ -1,21 +1,13 @@
 import { Request, Response } from 'express'
-//import { PersonRepository } from '../person/person.repository.js'
 import { comparePassword } from '../helpers/handleBcrypt.js'
 import { adminTokenSign, tokenSign, verifyToken } from '../helpers/generateToken.js'
-//import { AdminRepository } from '../admin/admin.repository.js'
-import { JwtPayload } from 'jsonwebtoken'
-//import { Admin } from '../admin/admin.model.js'
 import Person from '../person/person.model.js'
 import Admin from '../admin/admin.model.js'
-
-//const personRepository = new PersonRepository()
-//const adminRepository = new AdminRepository()
 
 export async function login(req: Request, res: Response) {
   try {
     const { email, password } = req.body
 
-    //const user = await personRepository.findByEmail({ email })
     const user = await Person.findOne({ email: email })
     console.log(user)
 
