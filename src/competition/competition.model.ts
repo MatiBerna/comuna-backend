@@ -1,4 +1,20 @@
 import { Schema, model } from 'mongoose'
+import { IEvento } from '../evento/evento.model'
+import { ICompetitionType } from '../competition-type/competition-type.model'
+import { ObjectId } from 'mongodb'
+
+export interface ICompetition {
+  _id: ObjectId
+  _idCompetitionType?: string
+  _idEvento?: string
+  evento?: IEvento
+  competitionType?: ICompetitionType
+  description: string
+  fechaHoraIni: Date
+  fechaHoraFinEstimada: Date
+  premios: string
+  costoInscripcion: number
+}
 
 const competitionSchema = new Schema(
   {

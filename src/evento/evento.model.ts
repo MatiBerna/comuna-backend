@@ -1,6 +1,7 @@
 import { Schema, model } from 'mongoose'
 
 export interface IEvento {
+  _id: string
   description: string
   fechaHoraIni: Date
   fechaHoraFin: Date

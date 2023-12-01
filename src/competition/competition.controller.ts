@@ -1,22 +1,50 @@
 import { Request, Response } from 'express'
-import Competition from './competition.model.js'
+import Competition, { ICompetition } from './competition.model.js'
 import { MongoServerError } from 'mongodb'
-import Evento from '../evento/evento.model.js'
-import CompetitionType from '../competition-type/competition-type.model.js'
+import Evento, { IEvento } from '../evento/evento.model.js'
+import CompetitionType, { ICompetitionType } from '../competition-type/competition-type.model.js'
 import mongoose from 'mongoose'
 
 export async function findAll(req: Request, res: Response) {
-  const competitions = await Competition.find()
-  res.json(competitions)
+  const competitionsToSend: ICompetition[] = []
+  const competitions: ICompetition[] = await Competition.find()
+
+  for (let index = 0; index < competitions.length; index++) {
+    let competition: any = competitions[index]
+    competition = competition.toObject()
+    const evento: IEvento = (await Evento.findById(competition._idEvento))!
+    const competitionType: ICompetitionType = (await CompetitionType.findById(competition._idCompetitionType))!
+
+    delete competition._idCompetitionType
+    delete competition._idEvento
+
+    competition.evento = evento
+    competition.CompetitionType = competitionType
+
+    competitionsToSend.push(competition)
+  }
+
+  res.json(competitionsToSend)
 }
 
 export async function findOne(req: Request, res: Response) {
   try {
-    const competition = await Competition.findById(req.params.id)
+    let competition: any = await Competition.findById(req.params.id)
 
     if (!competition) {
       return res.status(404).send({ message: 'Competencia no encontrada' })
     }
+
+    const evento: IEvento = (await Evento.findById(competition._idEvento))!
+    const competitionType: ICompetitionType = (await CompetitionType.findById(competition._idCompetitionType))!
+
+    competition = competition.toObject()
+
+    delete competition._idCompetitionType
+    delete competition._idEvento
+
+    competition.evento = evento
+    competition.CompetitionType = competitionType
 
     res.json(competition)
   } catch (err) {

@@ -4,7 +4,7 @@ GET http://localhost:3000/api/competition
 
 
 ### busca uno
-GET http://localhost:3000/api/competition/6566145214a1a83b57231c01
+GET http://localhost:3000/api/competition/65676eec4c08eea25044730e
 
 
 ### añade 

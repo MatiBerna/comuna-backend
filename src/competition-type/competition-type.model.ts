@@ -6,6 +6,7 @@ import { Schema, model } from 'mongoose'
 // }
 
 export interface ICompetitionType {
+  _id: string
   description: string
   rules: string
 }
