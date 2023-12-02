@@ -9,7 +9,7 @@ export interface ICompetition {
   _idEvento?: string
   evento?: IEvento
   competitionType?: ICompetitionType
-  description: string
+  descripcion: string
   fechaHoraIni: Date
   fechaHoraFinEstimada: Date
   premios: string

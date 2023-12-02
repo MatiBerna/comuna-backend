@@ -7,7 +7,15 @@ import mongoose from 'mongoose'
 
 export async function findAll(req: Request, res: Response) {
   const competitionsToSend: ICompetition[] = []
-  const competitions: ICompetition[] = await Competition.find()
+  let competitions: ICompetition[] = await Competition.find()
+
+  if (req.query.prox === 'true') {
+    competitions = await Competition.find({ fechaHoraIni: { $gte: Date.now() } }).sort({ fechaHoraIni: 1 })
+  } else if (req.query.disp === 'true') {
+    const now = Date.now()
+    const twoDaysLater = now + 2 * 24 * 60 * 60 * 1000
+    competitions = await Competition.find({ fechaHoraIni: { $gte: now, $lte: twoDaysLater } }).sort({ fechaHoraIni: 1 })
+  }
 
   for (let index = 0; index < competitions.length; index++) {
     let competition: any = competitions[index]
@@ -19,7 +27,7 @@ export async function findAll(req: Request, res: Response) {
     delete competition._idEvento
 
     competition.evento = evento
-    competition.CompetitionType = competitionType
+    competition.competitionType = competitionType
 
     competitionsToSend.push(competition)
   }
@@ -44,7 +52,7 @@ export async function findOne(req: Request, res: Response) {
     delete competition._idEvento
 
     competition.evento = evento
-    competition.CompetitionType = competitionType
+    competition.competitionType = competitionType
 
     res.json(competition)
   } catch (err) {
@@ -103,6 +111,7 @@ export async function add(req: Request, res: Response) {
     const mongoErr: MongoServerError = err as MongoServerError
 
     if (mongoErr.name === 'ValidationError') {
+      console.log(mongoErr)
       return res.status(400).send({ message: 'Falta atributo/s requerido/s' })
     } else if (mongoErr.name === 'MongoServerError' && mongoErr.code === 11000) {
       return res.status(400).send({ message: 'Competencia en el evento duplicada' })

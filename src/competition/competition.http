@@ -4,7 +4,7 @@ GET http://localhost:3000/api/competition
 
 
 ### busca uno
-GET http://localhost:3000/api/competition/65676eec4c08eea25044730e
+GET http://localhost:3000/api/competition/656ba9228f617b7370ced541
 
 
 ### añade 
@@ -12,11 +12,11 @@ POST http://localhost:3000/api/competition
 Content-Type: application/json
 
 {
-  "_idCompetitionType": "6524b0b2a1b2ef79b1d2bb07",
+  "_idCompetitionType": "654c012efc3bee6944d4c0df",
   "_idEvento": "656614c314a1a83b57231c09",
   "descripcion": "Competencia de levantamiento de dedo meñique",
-  "fechaHoraIni": "2023-12-31T20:00:00.000Z",
-  "fechaHoraFinEstimada": "2023-12-31T22:00:00.000Z",
+  "fechaHoraIni": "2024-01-01T00:00:00.000Z",
+  "fechaHoraFinEstimada": "2024-01-01T06:00:00.000Z",
   "premios": "Una champagne",
   "costoInscripcion": 20
 }
