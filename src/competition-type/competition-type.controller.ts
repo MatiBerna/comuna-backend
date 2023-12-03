@@ -2,6 +2,8 @@ import { Response, Request, NextFunction } from 'express'
 //import { CompetitionTypeRepository } from './competition-type.repository.js'
 import CompetitionType from './competition-type.model.js'
 import { MongoServerError } from 'mongodb'
+import mongoose from 'mongoose'
+import Competition from '../competition/competition.model.js'
 
 //const repository = new CompetitionTypeRepository()
 
@@ -69,6 +71,15 @@ export async function remove(req: Request, res: Response) {
   const id = req.params.id
 
   try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).send({ message: 'Tipo de competencia no encontrado' })
+    }
+
+    const competitionsOfType = await Competition.find({ _idCompetitionType: id })
+
+    if (competitionsOfType.length !== 0) {
+      return res.status(409).send({ message: 'Hay competencias del tipo seleccionado' })
+    }
     const competitionType = await CompetitionType.findByIdAndDelete(req.params.id)
 
     if (!competitionType) {
