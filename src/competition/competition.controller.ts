@@ -7,7 +7,7 @@ import mongoose from 'mongoose'
 
 export async function findAll(req: Request, res: Response) {
   const competitionsToSend: ICompetition[] = []
-  let competitions: ICompetition[] = await Competition.find()
+  let competitions: ICompetition[] = await Competition.find().sort({ fechaHoraIni: 1 })
 
   if (req.query.prox === 'true') {
     competitions = await Competition.find({ fechaHoraIni: { $gte: Date.now() } }).sort({ fechaHoraIni: 1 })
