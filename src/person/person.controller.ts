@@ -4,6 +4,20 @@ import Person, { IPerson } from './person.model.js'
 import { MongoServerError } from 'mongodb'
 
 export async function findAll(req: Request, res: Response) {
+  var filter = req.query.filter
+
+  if (filter) {
+    filter = filter.toString()
+    const persons = await Person.find({
+      $or: [
+        { dni: { $regex: new RegExp(filter, 'i') } },
+        { firstName: { $regex: new RegExp(filter, 'i') } },
+        { lastName: { $regex: new RegExp(filter, 'i') } },
+      ],
+    })
+    return res.json(persons)
+  }
+
   const persons = await Person.find().select('-password')
   res.json(persons)
 }

@@ -1,6 +1,7 @@
 ### obterner todas las personas
-GET http://localhost:3000/api/person
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTI4ODVlYzA1YmVhYTI4ZmU3NGUwYmIiLCJpYXQiOjE2OTg3ODYxMjIsImV4cCI6MTY5ODc5MzMyMn0.D96OXVJWq5FR85xUX_x7wUZjrNPAOJ7fFsnQBXIm0Po
+GET http://localhost:3000/api/person?filter
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1Mjg4NWVjMDViZWFhMjhmZTc0ZTBiYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJ1cGRhdGVkQXQiOiIyMDIzLTExLTEwVDEyOjUzOjM3LjUzOFoifSwiaWF0IjoxNzAxODA4MzQzLCJleHAiOjE3MDE4MTU1NDN9.hWHRQlg0FuajWa4z_eCWt87sYoK3ZZXdwye7B_gc-Rc
+
 ### 
 GET http://localhost:3000/api/person/65258a4829f08db9498afe2d
 
