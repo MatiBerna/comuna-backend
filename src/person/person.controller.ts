@@ -49,7 +49,8 @@ export async function add(req: Request, res: Response) {
     personInput.password = hashedPassword
   }
 
-  if (personInput.birthdate && new Date(personInput.birthdate).toString() === 'Invalid Id') {
+  //CORREGIR, NO VALIDA CORRACTAMENTE
+  if (req.body.birthdate && new Date(req.body.birthdate).toString() === 'Invalid Date') {
     return res.status(400).send({ message: 'La fecha de nacimineto ingresada no es valida' })
   }
 
@@ -78,14 +79,19 @@ export async function add(req: Request, res: Response) {
 export async function update(req: Request, res: Response) {
   const id = req.params.id
   try {
+    if (req.body.birthdate && new Date(req.body.birthdate).toString() === 'Invalid Date') {
+      return res.status(400).send({ message: 'La fecha de nacimiento ingresada no es valida' })
+    }
+
+    if (req.body.password) {
+      const hashedPassword = await hash(req.body.password, 10)
+      req.body.password = hashedPassword
+    }
+
     const person = await Person.findByIdAndUpdate(id, req.body, { new: true }).select('-password')
 
     if (!person) {
       return res.status(404).send({ message: 'Persona no encontrada' })
-    }
-
-    if (req.body.birthdate && new Date(req.body.birthdate).toString() === 'Invalid Id') {
-      return res.status(400).send({ message: 'La fecha de nacimineto ingresada no es valida' })
     }
 
     return res.status(200).json(person)
