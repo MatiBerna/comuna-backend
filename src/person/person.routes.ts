@@ -21,25 +21,28 @@ export const personRouter = Router()
  *                   items:
  *                     type: object
  *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         description: Id unico de la persona.
  *                       dni:
  *                         type: string
- *                         description: The unique identifier of the person.
+ *                         description: DNI de la persona (único).
  *                       firstName:
  *                         type: string
- *                         description: The first name of the person.
+ *                         description: Nombre/s de la persona.
  *                       lastName:
  *                         type: string
- *                         description: The last name of the person.
+ *                         description: Apellido/s de la persona.
  *                       phone:
  *                         type: string
- *                         description: The phone number of the person.
+ *                         description: Numero de telefono de la persona (no required).
  *                       email:
  *                         type: string
- *                         description: The email of the person.
+ *                         description: Email de la persona (único).
  *                       birthdate:
  *                         type: string
  *                         format: date
- *                         description: The birthdate of the person.
+ *                         description: Fecha de nacimiento de la persona.
  *
  *       401:
  *         description: Unauthorized
@@ -66,12 +69,12 @@ export const personRouter = Router()
  *         name: filter
  *         schema:
  *           type: string
- *         description: The filter to apply on the person data.
+ *         description: Filtro de budsqueda de personas por nombre, apellido o DNI.
  *       - in: header
  *         name: Authorization
  *         schema:
  *           type: string
- *         description: The authorization token.
+ *         description: Token de autorización.
  */
 personRouter.get('/', checkAdminAuth, findAll)
 
@@ -87,7 +90,7 @@ personRouter.get('/', checkAdminAuth, findAll)
  *         schema:
  *           type: string
  *         required: true
- *         description: The ID of the person to retrieve.
+ *         description: ID de la persona a devolver.
  *     responses:
  *       200:
  *         description: OK
@@ -96,25 +99,28 @@ personRouter.get('/', checkAdminAuth, findAll)
  *             schema:
  *               type: object
  *               properties:
+ *                 _id:
+ *                  type: string
+ *                  description: Id unico de la persona
  *                 dni:
- *                   type: string
- *                   description: The unique identifier of the person.
+ *                  type: string
+ *                  description: DNI de la persona (único).
  *                 firstName:
- *                   type: string
- *                   description: The first name of the person.
+ *                  type: string
+ *                  description: Nombre/s de la persona.
  *                 lastName:
- *                   type: string
- *                   description: The last name of the person.
+ *                  type: string
+ *                  description: Apellido/s de la persona.
  *                 phone:
- *                   type: string
- *                   description: The phone number of the person.
+ *                  type: string
+ *                  description: Numero de telefono de la persona (no required).
  *                 email:
- *                   type: string
- *                   description: The email of the person.
+ *                  type: string
+ *                  description: Email de la persona (único).
  *                 birthdate:
- *                   type: string
- *                   format: date
- *                   description: The birthdate of the person.
+ *                  type: string
+ *                  format: date
+ *                  description: Fecha de nacimiento de la persona.
  *       404:
  *         description: Not Found
  *         content:
@@ -152,26 +158,27 @@ personRouter.get('/:id', findOne)
  *             type: object
  *             properties:
  *               dni:
- *                 type: string
- *                 description: The unique identifier of the person.
+ *                type: string
+ *                description: DNI de la persona (único).
  *               firstName:
- *                 type: string
- *                 description: The first name of the person.
+ *                type: string
+ *                description: Nombre/s de la persona.
  *               lastName:
- *                 type: string
- *                 description: The last name of the person.
+ *                type: string
+ *                description: Apellido/s de la persona.
  *               phone:
- *                 type: string
- *                 description: The phone number of the person.
+ *                type: string
+ *                description: Numero de telefono de la persona (no required).
  *               email:
- *                 type: string
- *                 description: The email of the person.
+ *                type: string
+ *                description: Email de la persona (único).
  *               birthdate:
- *                 type: date
- *                 description: The birthdate of the person.
+ *                type: string
+ *                format: date
+ *                description: Fecha de nacimiento de la persona.
  *               password:
- *                 type: string
- *                 description: The password of the person.
+ *                type: string
+ *                description: Contraseña de la persona.
  *     responses:
  *       201:
  *         description: Created
@@ -186,24 +193,28 @@ personRouter.get('/:id', findOne)
  *                 data:
  *                   type: object
  *                   properties:
- *                     dni:
- *                       type: string
- *                       description: The unique identifier of the person.
- *                     firstName:
- *                       type: string
- *                       description: The first name of the person.
- *                     lastName:
- *                       type: string
- *                       description: The last name of the person.
- *                     phone:
- *                       type: string
- *                       description: The phone number of the person.
- *                     email:
- *                       type: string
- *                       description: The email of the person.
- *                     birthdate:
- *                       type: date
- *                       description: The birthdate of the person.
+ *                    _id:
+ *                      type: string
+ *                      description: Id unico de la persona
+ *                    dni:
+ *                      type: string
+ *                      description: DNI de la persona (único).
+ *                    firstName:
+ *                      type: string
+ *                      description: Nombre/s de la persona.
+ *                    lastName:
+ *                      type: string
+ *                      description: Apellido/s de la persona.
+ *                    phone:
+ *                      type: string
+ *                      description: Numero de telefono de la persona (no required).
+ *                    email:
+ *                      type: string
+ *                      description: Email de la persona (único).
+ *                    birthdate:
+ *                     type: string
+ *                     format: date
+ *                     description: Fecha de nacimiento de la persona.
  *       400:
  *         description: Bad Request
  *         content:
@@ -229,7 +240,7 @@ personRouter.post('/', add)
 
 /**
  * @openapi
- * /api/person/{id}:
+ * /person/{id}:
  *   put:
  *     tags:
  *       - Person
@@ -240,7 +251,7 @@ personRouter.post('/', add)
  *         schema:
  *           type: string
  *         required: true
- *         description: The ID of the person to update.
+ *         description: ID de la persona a actualizar.
  *     requestBody:
  *       required: true
  *       content:
@@ -250,25 +261,26 @@ personRouter.post('/', add)
  *             properties:
  *               dni:
  *                 type: string
- *                 description: The unique identifier of the person.
+ *                 description: DNI de la persona (único).
  *               firstName:
  *                 type: string
- *                 description: The first name of the person.
+ *                 description: Nombre/s de la persona.
  *               lastName:
  *                 type: string
- *                 description: The last name of the person.
+ *                 description: Apellido/s de la persona.
  *               phone:
  *                 type: string
- *                 description: The phone number of the person.
+ *                 description: Numero de telefono de la persona (no required).
  *               email:
  *                 type: string
- *                 description: The email of the person.
+ *                 description: Email de la persona (único).
  *               birthdate:
- *                 type: date
- *                 description: The birthdate of the person.
+ *                 type: string
+ *                 format: date
+ *                 description: Fecha de nacimiento de la persona.
  *               password:
  *                 type: string
- *                 description: The password of the person.
+ *                 description: Contraseña de la persona.
  *     responses:
  *       200:
  *         description: OK
@@ -277,24 +289,28 @@ personRouter.post('/', add)
  *             schema:
  *               type: object
  *               properties:
+ *                 _id:
+ *                   type: string
+ *                   description: Id unico de la persona
  *                 dni:
  *                   type: string
- *                   description: The unique identifier of the person.
+ *                   description: DNI de la persona (único).
  *                 firstName:
  *                   type: string
- *                   description: The first name of the person.
+ *                   description: Nombre/s de la persona.
  *                 lastName:
  *                   type: string
- *                   description: The last name of the person.
+ *                   description: Apellido/s de la persona.
  *                 phone:
  *                   type: string
- *                   description: The phone number of the person.
+ *                   description: Numero de telefono de la persona (no required).
  *                 email:
  *                   type: string
- *                   description: The email of the person.
+ *                   description: Email de la persona (único).
  *                 birthdate:
- *                   type: date
- *                   description: The birthdate of the person.
+ *                   type: string
+ *                   format: date
+ *                   description: Fecha de nacimiento de la persona.
  *       400:
  *         description: Bad Request
  *         content:
@@ -336,12 +352,13 @@ personRouter.post('/', add)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
+
 personRouter.put('/:id', checkPersonAuth, update)
 
 /**
  * @openapi
- * /api/person/{id}:
- *   put:
+ * /person/{id}:
+ *   patch:
  *     tags:
  *       - Person
  *     description: Actualiza una persona, si esta tiene el permiso (es admin o es una persona) viendo el header authorization
@@ -361,25 +378,26 @@ personRouter.put('/:id', checkPersonAuth, update)
  *             properties:
  *               dni:
  *                 type: string
- *                 description: The unique identifier of the person.
+ *                 description: DNI de la persona (único).
  *               firstName:
  *                 type: string
- *                 description: The first name of the person.
+ *                 description: Nombre/s de la persona.
  *               lastName:
  *                 type: string
- *                 description: The last name of the person.
+ *                 description: Apellido/s de la persona.
  *               phone:
  *                 type: string
- *                 description: The phone number of the person.
+ *                 description: Numero de telefono de la persona (no required).
  *               email:
  *                 type: string
- *                 description: The email of the person.
+ *                 description: Email de la persona (único).
  *               birthdate:
- *                 type: date
- *                 description: The birthdate of the person.
+ *                 type: string
+ *                 format: date
+ *                 description: Fecha de nacimiento de la persona.
  *               password:
  *                 type: string
- *                 description: The password of the person.
+ *                 description: Contraseña de la persona.
  *     responses:
  *       200:
  *         description: OK
@@ -388,24 +406,28 @@ personRouter.put('/:id', checkPersonAuth, update)
  *             schema:
  *               type: object
  *               properties:
+ *                 _id:
+ *                   type: string
+ *                   description: Id unico de la persona
  *                 dni:
  *                   type: string
- *                   description: The unique identifier of the person.
+ *                   description: DNI de la persona (único).
  *                 firstName:
  *                   type: string
- *                   description: The first name of the person.
+ *                   description: Nombre/s de la persona.
  *                 lastName:
  *                   type: string
- *                   description: The last name of the person.
+ *                   description: Apellido/s de la persona.
  *                 phone:
  *                   type: string
- *                   description: The phone number of the person.
+ *                   description: Numero de telefono de la persona (no required).
  *                 email:
  *                   type: string
- *                   description: The email of the person.
+ *                   description: Email de la persona (único).
  *                 birthdate:
- *                   type: date
- *                   description: The birthdate of the person.
+ *                   type: string
+ *                   format: date
+ *                   description: Fecha de nacimiento de la persona.
  *       400:
  *         description: Bad Request
  *         content:
@@ -461,7 +483,7 @@ personRouter.patch('/:id', update)
  *         schema:
  *           type: string
  *         required: true
- *         description: The ID of the person to delete.
+ *         description: ID de la persona a eliminar.
  *     responses:
  *       200:
  *         description: OK
@@ -476,24 +498,28 @@ personRouter.patch('/:id', update)
  *                 data:
  *                   type: object
  *                   properties:
+ *                     _id:
+ *                      type: string
+ *                      description: Id unico de la persona
  *                     dni:
- *                       type: string
- *                       description: The unique identifier of the person.
+ *                      type: string
+ *                      description: DNI de la persona (único).
  *                     firstName:
- *                       type: string
- *                       description: The first name of the person.
+ *                      type: string
+ *                      description: Nombre/s de la persona.
  *                     lastName:
- *                       type: string
- *                       description: The last name of the person.
+ *                      type: string
+ *                      description: Apellido/s de la persona.
  *                     phone:
- *                       type: string
- *                       description: The phone number of the person.
+ *                      type: string
+ *                      description: Numero de telefono de la persona (no required).
  *                     email:
- *                       type: string
- *                       description: The email of the person.
+ *                      type: string
+ *                      description: Email de la persona (único).
  *                     birthdate:
- *                       type: date
- *                       description: The birthdate of the person.
+ *                      type: string
+ *                      format: date
+ *                      description: Fecha de nacimiento de la persona.
  *       404:
  *         description: Not Found
  *         content:

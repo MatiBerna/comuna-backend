@@ -85,7 +85,7 @@ export async function remove(req: Request, res: Response) {
     if (!competitionType) {
       return res.status(404).send({ message: 'Tipo de competencia no encontrado' })
     }
-    return res.status(200).send({ message: 'Competition Type deleted', data: competitionType })
+    return res.status(200).send({ message: 'Tipo de Competencia eliminado', data: competitionType })
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {
       return res.status(404).send({ message: 'Tipo de competencia no encontrado' })
