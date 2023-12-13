@@ -8,9 +8,6 @@ import { dbConect } from './shared/db/conn.js'
 import { eventoRouter } from './evento/evento.routes.js'
 import { competetitionRouter } from './competition/competition.routes.js'
 import { swaggerDocs } from './shared/swagger/swagger.js'
-import { Application } from 'express'
-import swaggerJSDoc from 'swagger-jsdoc'
-import swaggerUi from 'swagger-ui-express'
 
 const app = express()
 dbConect()

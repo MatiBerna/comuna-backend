@@ -79,6 +79,26 @@ eventoRouter.get('/', findAll)
  *                         type: string
  *                         format: date
  *                         description: Fecha y hora de fin del evento.
+ *       404:
+ *        description: Not Found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: Evento no encontrado
+ *       500:
+ *        description: Internal Server Error
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: Error interno en el servidor de datos
  */
 eventoRouter.get('/:id', findOne)
 
