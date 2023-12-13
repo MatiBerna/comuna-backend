@@ -316,7 +316,7 @@ competitionTypeRouter.patch('/:id', checkAdminAuth, update)
 
 /**
  * @openapi
- * /api/person/{id}:
+ * /api/competition-type/{id}:
  *  delete:
  *    tags:
  *      - Competition Type
