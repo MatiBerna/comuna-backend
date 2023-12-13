@@ -99,10 +99,13 @@ export async function remove(req: Request, res: Response) {
     if (!admin) {
       return res.status(404).send({ message: 'Admin no encontrado' })
     }
-    return res.status(200).send({ message: 'Admin deleted', data: admin })
+    return res.status(200).send({ message: 'Admin eliminado', data: admin })
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {
       return res.status(404).send({ message: 'Admin no encontrado' })
+    } else {
+      console.log(err)
+      return res.status(500).send({ message: 'Error interno del servidor de Datos' })
     }
   }
 }
