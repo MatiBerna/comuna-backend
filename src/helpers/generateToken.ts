@@ -43,7 +43,7 @@ export async function verifyToken(token: string) {
   }
 }
 
-const decodeSign = (token: string) => {
+export const decodeSign = (token: string) => {
   //TODO: Verificar que el token sea valido y correcto
   return decode(token)
 }
