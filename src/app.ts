@@ -7,6 +7,7 @@ import { adminRouter } from './admin/admin.routes.js'
 import { dbConect } from './shared/db/conn.js'
 import { eventoRouter } from './evento/evento.routes.js'
 import { competetitionRouter } from './competition/competition.routes.js'
+import { swaggerDocs } from './shared/swagger/swagger.js'
 
 const app = express()
 dbConect()
@@ -26,6 +27,8 @@ app.use('/api/auth', authRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/evento', eventoRouter)
 app.use('/api/competition', competetitionRouter)
+
+swaggerDocs(app, 3000)
 
 app.use((_, res) => {
   return res.status(404).send({ mesage: 'Resourse not found' })

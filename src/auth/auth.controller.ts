@@ -6,10 +6,9 @@ import Admin from '../admin/admin.model.js'
 
 export async function login(req: Request, res: Response) {
   try {
-    const { email, password } = req.body
+    const { username, password } = req.body
 
-    const user = await Person.findOne({ email: email })
-    console.log(user)
+    const user = await Person.findOne({ email: username })
 
     if (!user) {
       return res.status(401).send({ message: 'Nombre de usuario o contraseña incorrectos' })

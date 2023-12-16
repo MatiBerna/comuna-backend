@@ -1,11 +1,21 @@
-import { Request, Response, NextFunction } from 'express'
+import { Request, Response } from 'express'
 import { hash } from 'bcrypt-ts'
-import Admin from './admin.model.js'
+import Admin, { IAdmin } from './admin.model.js'
 import { MongoServerError } from 'mongodb'
-import { IAdmin } from './admin.model.js'
+import { decodeSign } from '../helpers/generateToken.js'
+import { JwtPayload } from 'jsonwebtoken'
+import mongoose from 'mongoose'
 
 export async function add(req: Request, res: Response) {
   const adminInput = new Admin(req.body)
+
+  const token = String(req.headers.authorization?.split(' ').pop())
+
+  const rta = await checkSARole(token)
+
+  if (rta === false) {
+    return res.status(401).send({ message: 'No tienes permiso de super admin' })
+  }
 
   if (adminInput.password) {
     const hashedPassword = await hash(adminInput.password, 10)
@@ -18,9 +28,16 @@ export async function add(req: Request, res: Response) {
     return res.status(400).send({ message: 'Datos incompletos' })
   }
 
+  //para que ningun admin se pase de vivo
+  if (adminInput.role) {
+    adminInput.role = 'NSA'
+  }
+
   try {
     const admin = await adminInput.save()
-    return res.status(201).json({ message: 'Admin creado', data: admin })
+    const adminObject = admin.toObject()
+    const { password, ...adminWP } = adminObject
+    return res.status(201).json({ message: 'Admin creado', data: adminWP })
   } catch (err) {
     const mongoErr: MongoServerError = err as MongoServerError
     if (mongoErr.code === 11000) {
@@ -61,11 +78,22 @@ export async function findOne(req: Request, res: Response) {
 }
 
 export async function update(req: Request, res: Response) {
-  const id = req.params.id
+  const token = String(req.headers.authorization?.split(' ').pop())
+  const userData = decodeSign(token) as JwtPayload
+  const rta = await checkSARole(token)
+
+  if (!rta && userData.user._id !== req.params.id) {
+    return res.status(401).send({ message: 'No tienes permiso para actualizar administradores' })
+  }
 
   if (req.body.password) {
     const hashedPassword = await hash(req.body.password, 10)
     req.body.password = hashedPassword
+  }
+
+  //para que ningun admin se pase de vivo
+  if (req.body.role) {
+    req.body.role = 'NSA'
   }
 
   try {
@@ -94,15 +122,46 @@ export async function update(req: Request, res: Response) {
 export async function remove(req: Request, res: Response) {
   const id = req.params.id
 
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).send({ message: 'Admin no encontrado' })
+  }
+
+  const token = String(req.headers.authorization?.split(' ').pop())
+  const rta = await checkSARole(token)
+
+  if (!rta) {
+    return res.status(401).send({ message: 'No tienes permiso para borrar administradores' })
+  }
+
   try {
-    const admin = await Admin.findByIdAndDelete(id)
+    const adminToDelete = await Admin.findById(id)
+    if (adminToDelete && adminToDelete.role === 'SA') {
+      return res.status(400).send({ message: 'No es posible borrar a este administrador' })
+    }
+
+    const admin = await Admin.findByIdAndDelete(id).select('-password')
     if (!admin) {
       return res.status(404).send({ message: 'Admin no encontrado' })
     }
-    return res.status(200).send({ message: 'Admin deleted', data: admin })
+    return res.status(200).send({ message: 'Admin eliminado', data: admin })
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {
       return res.status(404).send({ message: 'Admin no encontrado' })
+    } else {
+      console.log(err)
+      return res.status(500).send({ message: 'Error interno del servidor de Datos' })
     }
+  }
+}
+
+async function checkSARole(token: string) {
+  const userData = decodeSign(token) as JwtPayload
+
+  const admin: IAdmin | undefined = (await Admin.findById(userData.user._id)) || undefined
+
+  if (admin && admin.role === 'SA') {
+    return true
+  } else {
+    return false
   }
 }

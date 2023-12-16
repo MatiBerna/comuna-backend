@@ -37,7 +37,8 @@ export async function checkPersonAuth(req: Request, res: Response, next: NextFun
     }
 
     if (!personData) {
-      return res.status(401).send({ message: 'No tienes permiso' })
+      checkAdminAuth(req, res, next)
+      //return res.status(401).send({ message: 'No tienes permiso' })
     } else {
       next()
     }

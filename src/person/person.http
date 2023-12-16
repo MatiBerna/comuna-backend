@@ -1,7 +1,6 @@
 ### obterner todas las personas
 GET http://localhost:3000/api/person?filter
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1Mjg4NWVjMDViZWFhMjhmZTc0ZTBiYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJ1cGRhdGVkQXQiOiIyMDIzLTExLTEwVDEyOjUzOjM3LjUzOFoifSwiaWF0IjoxNzAxODA4MzQzLCJleHAiOjE3MDE4MTU1NDN9.hWHRQlg0FuajWa4z_eCWt87sYoK3ZZXdwye7B_gc-Rc
-
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1Mjg4NWVjMDViZWFhMjhmZTc0ZTBiYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJ1cGRhdGVkQXQiOiIyMDIzLTEyLTA2VDE1OjUxOjM3LjgzMloifSwiaWF0IjoxNzAyMTY2OTY4LCJleHAiOjE3MDIxNzQxNjh9.6ybzZ7ENRwF0e_ArOZ6oH6YxwmKQqr2ky4lrQCyx49U
 ### 
 GET http://localhost:3000/api/person/65258a4829f08db9498afe2d
 
@@ -10,13 +9,13 @@ POST http://localhost:3000/api/person
 Content-Type: application/json
 
 {
-  "dni": "44857723",
+  "dni": "44857721",
   "firstName": "Matias",
   "lastName": "Bernardi",
   "phone": "3329577636",
-  "email": "matias.bernardi.1@gmai.com",
-  "birthdate": "2003-04-23T18:25:43.511Z",
-  "password": "hola123456"
+  "email": "matias.bernardi.1@gmail1.com",
+  "birthdate": "2003-04-23T18:25:43.510Z",
+  "password": "hola123456",
 }
 
 ### modifico totalmente una persona
@@ -44,4 +43,4 @@ Content-Type: application/json
 }
 
 ### elimino una persona
-DELETE http://localhost:3000/api/person/654bfdcefd7de634bea07255
+DELETE http://localhost:3000/api/person/6570f8a8e6007d6d54ffd37b
