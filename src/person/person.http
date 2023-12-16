@@ -9,13 +9,13 @@ POST http://localhost:3000/api/person
 Content-Type: application/json
 
 {
-  "dni": "44857723",
+  "dni": "44857721",
   "firstName": "Matias",
   "lastName": "Bernardi",
   "phone": "3329577636",
-  "email": "matias.bernardi.1@gmail.com",
+  "email": "matias.bernardi.1@gmail1.com",
   "birthdate": "2003-04-23T18:25:43.510Z",
-  "password": "hola123456"
+  "password": "hola123456",
 }
 
 ### modifico totalmente una persona

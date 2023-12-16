@@ -58,7 +58,8 @@ export async function add(req: Request, res: Response) {
     const person = await personInput.save()
     const personObject = person.toObject()
     const { password, ...personWPassword } = personObject
-    return res.status(201).json({ message: 'Person created', data: personWPassword })
+
+    return res.status(201).json({ message: 'Persona creada', data: personWPassword })
   } catch (err) {
     const mongoErr: MongoServerError = err as MongoServerError
     if (mongoErr.code === 11000) {
@@ -123,7 +124,7 @@ export async function remove(req: Request, res: Response) {
     if (!person) {
       return res.status(404).send({ message: 'Persona no encontrada' })
     }
-    return res.status(200).send({ message: 'Person deleted', data: person })
+    return res.status(200).send({ message: 'Persona eliminada', data: person })
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {
       console.log(err)
