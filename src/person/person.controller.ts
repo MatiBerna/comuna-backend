@@ -2,6 +2,8 @@ import { Response, Request } from 'express'
 import { hash } from 'bcrypt-ts'
 import Person, { IPerson } from './person.model.js'
 import { MongoServerError } from 'mongodb'
+import { Result, validationResult } from 'express-validator'
+import mongoose from 'mongoose'
 
 export async function findAll(req: Request, res: Response) {
   var filter = req.query.filter
@@ -14,7 +16,7 @@ export async function findAll(req: Request, res: Response) {
         { firstName: { $regex: new RegExp(filter, 'i') } },
         { lastName: { $regex: new RegExp(filter, 'i') } },
       ],
-    })
+    }).select('-password')
     return res.json(persons)
   }
 
@@ -23,6 +25,12 @@ export async function findAll(req: Request, res: Response) {
 }
 
 export async function findOne(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
   try {
     const person = await Person.findById(req.params.id).select('-password')
 
@@ -42,17 +50,17 @@ export async function findOne(req: Request, res: Response) {
 }
 
 export async function add(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+
   const personInput = new Person(req.body)
 
-  if (personInput.password) {
-    const hashedPassword = await hash(personInput.password, 10)
-    personInput.password = hashedPassword
-  }
-
-  //CORREGIR, NO VALIDA CORRACTAMENTE
-  if (req.body.birthdate && new Date(req.body.birthdate).toString() === 'Invalid Date') {
-    return res.status(400).send({ message: 'La fecha de nacimineto ingresada no es valida' })
-  }
+  const hashedPassword = await hash(personInput.password, 10)
+  personInput.password = hashedPassword
 
   try {
     const person = await personInput.save()
@@ -64,9 +72,9 @@ export async function add(req: Request, res: Response) {
     const mongoErr: MongoServerError = err as MongoServerError
     if (mongoErr.code === 11000) {
       if (mongoErr.keyPattern && mongoErr.keyPattern.email === 1) {
-        return res.status(400).send({ message: 'Email Repetido' })
+        return res.status(409).send({ message: 'Email Repetido' })
       } else {
-        return res.status(400).send({ message: 'DNI Repetido' })
+        return res.status(409).send({ message: 'DNI Repetido' })
       }
     } else if (mongoErr.name === 'ValidationError') {
       return res.status(400).send({ message: 'Falta un atributo requerido' })
@@ -79,11 +87,16 @@ export async function add(req: Request, res: Response) {
 
 export async function update(req: Request, res: Response) {
   const id = req.params.id
-  try {
-    if (req.body.birthdate && new Date(req.body.birthdate).toString() === 'Invalid Date') {
-      return res.status(400).send({ message: 'La fecha de nacimiento ingresada no es valida' })
-    }
+  const result: Result = validationResult(req)
+  const errors = result.array()
 
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(404).send({ message: 'Persona no encontrada' })
+  }
+  try {
     if (req.body.password) {
       const hashedPassword = await hash(req.body.password, 10)
       req.body.password = hashedPassword
@@ -100,9 +113,9 @@ export async function update(req: Request, res: Response) {
     const mongoErr: MongoServerError = err as MongoServerError
     if (mongoErr.code === 11000) {
       if (mongoErr.keyPattern && mongoErr.keyPattern.email === 1) {
-        return res.status(400).send({ message: 'Email Repetido' })
+        return res.status(409).send({ message: 'Email Repetido' })
       } else {
-        return res.status(400).send({ message: 'DNI Repetido' })
+        return res.status(409).send({ message: 'DNI Repetido' })
       }
     } else {
       if (err instanceof Error && err.name === 'CastError') {
@@ -117,6 +130,13 @@ export async function update(req: Request, res: Response) {
 
 export async function remove(req: Request, res: Response) {
   const id = req.params.id
+
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
 
   try {
     const person = await Person.findByIdAndDelete(id)

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { add, findAll, findOne, remove, update } from './admin.controller.js'
 import { checkAdminAuth } from '../auth/auth.middleware.js'
+import { checkSchema, param } from 'express-validator'
 
 export const adminRouter = Router()
 
@@ -108,9 +109,26 @@ adminRouter.get('/', checkAdminAuth, findAll)
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: token incorrecto o inexistente
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: ID de admin inválido
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: params
  *      401:
  *         description: Unauthorized
  *         content:
@@ -142,7 +160,12 @@ adminRouter.get('/', checkAdminAuth, findAll)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-adminRouter.get('/:id', checkAdminAuth, findOne)
+adminRouter.get(
+  '/:id',
+  checkAdminAuth,
+  param('id').notEmpty().withMessage('El id de admin es requerido').isMongoId().withMessage('ID de admin inválido'),
+  findOne
+)
 
 /**
  * @openapi
@@ -198,9 +221,26 @@ adminRouter.get('/:id', checkAdminAuth, findOne)
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: Datos incompletos
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: admina123123
+ *                      msg:
+ *                        type: string
+ *                        example: El nombre de usuario es requerido
+ *                      path:
+ *                        type: string
+ *                        example: username
+ *                      location:
+ *                        type: string
+ *                        example: body
  *      401:
  *         description: Unauthorized
  *         content:
@@ -222,7 +262,15 @@ adminRouter.get('/:id', checkAdminAuth, findOne)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-adminRouter.post('/', checkAdminAuth, add)
+adminRouter.post(
+  '/',
+  checkAdminAuth,
+  checkSchema({
+    username: { trim: true, notEmpty: { errorMessage: 'Nombre de usuario es requrido' } },
+    password: { notEmpty: { errorMessage: 'Contraseña es requerida' } },
+  }),
+  add
+)
 
 /**
  * @openapi
@@ -284,9 +332,26 @@ adminRouter.post('/', checkAdminAuth, add)
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: Datos incompletos
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: ID de admin inválido
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: param
  *      401:
  *         description: Unauthorized
  *         content:
@@ -318,7 +383,12 @@ adminRouter.post('/', checkAdminAuth, add)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-adminRouter.put('/:id', checkAdminAuth, update)
+adminRouter.put(
+  '/:id',
+  checkAdminAuth,
+  param('id').notEmpty().withMessage('El id de admin es requerido').isMongoId().withMessage('ID de admin inválido'),
+  update
+)
 
 /**
  * @openapi
@@ -380,9 +450,26 @@ adminRouter.put('/:id', checkAdminAuth, update)
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: Datos incompletos
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: ID de admin inválido
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: param
  *      401:
  *         description: Unauthorized
  *         content:
@@ -414,7 +501,12 @@ adminRouter.put('/:id', checkAdminAuth, update)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-adminRouter.patch('/:id', checkAdminAuth, update)
+adminRouter.patch(
+  '/:id',
+  checkAdminAuth,
+  param('id').notEmpty().withMessage('El id de admin es requerido').isMongoId().withMessage('ID de admin inválido'),
+  update
+)
 
 /**
  * @openapi
@@ -456,6 +548,33 @@ adminRouter.patch('/:id', checkAdminAuth, update)
  *                      username:
  *                        type: string
  *                        description: Nombre de usuario del adiminstrador
+ *      400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: ID de admin inválido
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: param
  *      401:
  *         description: Unauthorized
  *         content:
@@ -487,4 +606,9 @@ adminRouter.patch('/:id', checkAdminAuth, update)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-adminRouter.delete('/:id', checkAdminAuth, remove)
+adminRouter.delete(
+  '/:id',
+  checkAdminAuth,
+  param('id').notEmpty().withMessage('El id de admin es requerido').isMongoId().withMessage('ID de admin inválido'),
+  remove
+)

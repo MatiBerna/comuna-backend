@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { add, findAll, findOne, update, remove } from './person.controller.js'
 import { checkAdminAuth, checkPersonAuth } from '../auth/auth.middleware.js'
+import { checkSchema, param } from 'express-validator'
 
 export const personRouter = Router()
 
@@ -121,6 +122,33 @@ personRouter.get('/', checkAdminAuth, findAll)
  *                  type: string
  *                  format: date
  *                  description: Fecha de nacimiento de la persona.
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: ID de persona inválido
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: params
  *       404:
  *         description: Not Found
  *         content:
@@ -142,7 +170,11 @@ personRouter.get('/', checkAdminAuth, findAll)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-personRouter.get('/:id', findOne)
+personRouter.get(
+  '/:id',
+  param('id').notEmpty().withMessage('El id de persona es requerido').isMongoId().withMessage('ID de persona inválido'),
+  findOne
+)
 
 /**
  * @openapi
@@ -222,9 +254,26 @@ personRouter.get('/:id', findOne)
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: La fecha de nacimineto ingresada no es valida
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: matias.bernardi.1gmail.com
+ *                      msg:
+ *                        type: string
+ *                        example: El E-Mail ingresado es inválido
+ *                      path:
+ *                        type: string
+ *                        example: email
+ *                      location:
+ *                        type: string
+ *                        example: body
  *       500:
  *         description: Internal Server Error
  *         content:
@@ -236,7 +285,47 @@ personRouter.get('/:id', findOne)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-personRouter.post('/', add)
+personRouter.post(
+  '/',
+  checkSchema({
+    dni: {
+      trim: true,
+      notEmpty: { errorMessage: 'El DNI es requerido', bail: true },
+      isNumeric: { errorMessage: 'El DNI debe ser numérico', bail: true },
+      isLength: { options: { min: 7 }, errorMessage: 'El DNI debe tener al menos 7 dígitos' },
+    },
+    firstName: {
+      trim: true,
+      notEmpty: { errorMessage: 'El campo nombre es requerido', bail: true },
+      matches: { options: /^[A-Za-z\s]*$/, errorMessage: 'El campo nombre solo debe letras y espacios' },
+    },
+    lastName: {
+      trim: true,
+      notEmpty: { errorMessage: 'El campo apellido es requerido', bail: true },
+      matches: { options: /^[A-Za-z\s]*$/, errorMessage: 'El campo apellido solo debe letras y espacios' },
+    },
+    phone: {
+      trim: true,
+      optional: true,
+      isNumeric: { errorMessage: 'El campo teléfono solo debe contener números' },
+    },
+    email: {
+      trim: true,
+      notEmpty: { errorMessage: 'El E-Mail es requerido', bail: true },
+      isEmail: { errorMessage: 'El E-Mail ingresado es inválido' },
+    },
+    birthdate: {
+      trim: true,
+      notEmpty: { errorMessage: 'La fecha de nacimiento es requerida', bail: true },
+      isISO8601: { errorMessage: 'La fecha de nacimiento no es válida' },
+    },
+    password: {
+      notEmpty: { errorMessage: 'La contraseña es requerida' },
+      isLength: { options: { min: 6 }, errorMessage: 'La contraseña debe tener minimo 6 caracteres' },
+    },
+  }),
+  add
+)
 
 /**
  * @openapi
@@ -318,9 +407,26 @@ personRouter.post('/', add)
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: La fecha de nacimiento ingresada no es valida
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: matias.bernardi.1gmail.com
+ *                      msg:
+ *                        type: string
+ *                        example: El E-Mail ingresado es inválido
+ *                      path:
+ *                        type: string
+ *                        example: email
+ *                      location:
+ *                        type: string
+ *                        example: body
  *       401:
  *         description: Unauthorized
  *         content:
@@ -353,7 +459,49 @@ personRouter.post('/', add)
  *                   example: Error interno del servidor de Datos
  */
 
-personRouter.put('/:id', checkPersonAuth, update)
+personRouter.put(
+  '/:id',
+  checkPersonAuth,
+  param('id').notEmpty().withMessage('El id de persona es requerido').isMongoId().withMessage('ID de persona inválido'),
+  checkSchema({
+    dni: {
+      trim: true,
+      optional: true,
+      isNumeric: { errorMessage: 'El DNI debe ser numérico', bail: true },
+      isLength: { options: { min: 7 }, errorMessage: 'El DNI debe tener al menos 7 dígitos' },
+    },
+    firstName: {
+      trim: true,
+      optional: true,
+      matches: { options: /^[A-Za-z\s]*$/, errorMessage: 'El campo nombre solo debe letras y espacios' },
+    },
+    lastName: {
+      trim: true,
+      optional: true,
+      matches: { options: /^[A-Za-z\s]*$/, errorMessage: 'El campo apellido solo debe letras y espacios' },
+    },
+    phone: {
+      trim: true,
+      optional: true,
+      isNumeric: { errorMessage: 'El campo teléfono solo debe contener números' },
+    },
+    email: {
+      trim: true,
+      optional: true,
+      isEmail: { errorMessage: 'El E-Mail ingresado es inválido' },
+    },
+    birthdate: {
+      trim: true,
+      optional: true,
+      isISO8601: { errorMessage: 'La fecha de nacimiento no es válida' },
+    },
+    password: {
+      optional: true,
+      isLength: { options: { min: 6 }, errorMessage: 'La contraseña debe tener minimo 6 caracteres' },
+    },
+  }),
+  update
+)
 
 /**
  * @openapi
@@ -435,9 +583,26 @@ personRouter.put('/:id', checkPersonAuth, update)
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: La fecha de nacimiento ingresada no es valida
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: matias.bernardi.1gmail.com
+ *                      msg:
+ *                        type: string
+ *                        example: El E-Mail ingresado es inválido
+ *                      path:
+ *                        type: string
+ *                        example: email
+ *                      location:
+ *                        type: string
+ *                        example: body
  *       401:
  *         description: Unauthorized
  *         content:
@@ -469,7 +634,49 @@ personRouter.put('/:id', checkPersonAuth, update)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-personRouter.patch('/:id', update)
+personRouter.patch(
+  '/:id',
+  checkPersonAuth,
+  param('id').notEmpty().withMessage('El id de persona es requerido').isMongoId().withMessage('ID de persona inválido'),
+  checkSchema({
+    dni: {
+      trim: true,
+      optional: true,
+      isNumeric: { errorMessage: 'El DNI debe ser numérico', bail: true },
+      isLength: { options: { min: 7 }, errorMessage: 'El DNI debe tener al menos 7 dígitos' },
+    },
+    firstName: {
+      trim: true,
+      optional: true,
+      matches: { options: /^[A-Za-z\s]*$/, errorMessage: 'El campo nombre solo debe letras y espacios' },
+    },
+    lastName: {
+      trim: true,
+      optional: true,
+      matches: { options: /^[A-Za-z\s]*$/, errorMessage: 'El campo apellido solo debe letras y espacios' },
+    },
+    phone: {
+      trim: true,
+      optional: true,
+      isNumeric: { errorMessage: 'El campo teléfono solo debe contener números' },
+    },
+    email: {
+      trim: true,
+      optional: true,
+      isEmail: { errorMessage: 'El E-Mail ingresado es inválido' },
+    },
+    birthdate: {
+      trim: true,
+      optional: true,
+      isISO8601: { errorMessage: 'La fecha de nacimiento no es válida' },
+    },
+    password: {
+      optional: true,
+      isLength: { options: { min: 6 }, errorMessage: 'La contraseña debe tener minimo 6 caracteres' },
+    },
+  }),
+  update
+)
 
 /**
  * @openapi
@@ -520,6 +727,33 @@ personRouter.patch('/:id', update)
  *                      type: string
  *                      format: date
  *                      description: Fecha de nacimiento de la persona.
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: ID de persona inválido
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: params
  *       404:
  *         description: Not Found
  *         content:
@@ -541,4 +775,8 @@ personRouter.patch('/:id', update)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-personRouter.delete('/:id', remove)
+personRouter.delete(
+  '/:id',
+  param('id').notEmpty().withMessage('El id de persona es requerido').isMongoId().withMessage('ID de persona inválido'),
+  remove
+)

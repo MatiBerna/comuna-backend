@@ -11,15 +11,15 @@ POST http://localhost:3000/api/evento
 Content-Type: application/json
 
 {
-  "description": "Navidad",
-  "fechaHoraIni": "2023-12-24T20:00:00.000Z",
-  "fechaHoraFin": "2023-12-25T06:00:00.000Z"
+  "description": "Reyes magos",
+  "fechaHoraIni": "2024-01-06T20:00:00.000Z",
+  "fechaHoraFin": "2024-01-08T06:00:00.000Z"
 }
 
 
 ### modifica PUT
 
-PUT http://localhost:3000/api/evento/656614c314a1a83b57231c09
+PUT http://localhost:3000/api/evento/658445a6ed74c6c9cf106208
 Content-Type: application/json
 
 {

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { add, findAll, findOne, remove, update } from './competition-type.controller.js'
 import { checkAdminAuth } from '../auth/auth.middleware.js'
+import { checkSchema, param } from 'express-validator'
 
 export const competitionTypeRouter = Router()
 
@@ -63,6 +64,33 @@ competitionTypeRouter.get('/', findAll)
  *                rules:
  *                  type: string
  *                  description: Descripcion de las reglas del tipo de competencia.
+ *      400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: ID de tipo competencia inválido
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: params
  *      404:
  *        description: Not Found
  *        content:
@@ -84,7 +112,15 @@ competitionTypeRouter.get('/', findAll)
  *                  type: string
  *                  example: Error interno del servidor de Datos
  */
-competitionTypeRouter.get('/:id', findOne)
+competitionTypeRouter.get(
+  '/:id',
+  param('id')
+    .notEmpty()
+    .withMessage('El id de tipo competencia es requerido')
+    .isMongoId()
+    .withMessage('ID de tipo competencia inválido'),
+  findOne
+)
 
 /**
  * @openapi
@@ -142,9 +178,26 @@ competitionTypeRouter.get('/:id', findOne)
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: Falta un atributo requerido
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: ""
+ *                      msg:
+ *                        type: string
+ *                        example: La decripción es requerida
+ *                      path:
+ *                        type: string
+ *                        example: description
+ *                      location:
+ *                        type: string
+ *                        example: body
  *      500:
  *         description: Internal Server Error
  *         content:
@@ -156,7 +209,15 @@ competitionTypeRouter.get('/:id', findOne)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-competitionTypeRouter.post('/', checkAdminAuth, add)
+competitionTypeRouter.post(
+  '/',
+  checkAdminAuth,
+  checkSchema({
+    description: { trim: true, notEmpty: { errorMessage: 'La descripción es requerida' } },
+    rules: { trim: true, notEmpty: { errorMessage: 'El campo reglas es requerido' } },
+  }),
+  add
+)
 
 /**
  * @openapi
@@ -213,6 +274,33 @@ competitionTypeRouter.post('/', checkAdminAuth, add)
  *                    rules:
  *                      type: string
  *                      description: Descripcion de las regla del tipo de competencia.
+ *      400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: ID de tipo competencia inválido
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: params
  *      404:
  *         description: Not Found
  *         content:
@@ -234,7 +322,16 @@ competitionTypeRouter.post('/', checkAdminAuth, add)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-competitionTypeRouter.put('/:id', checkAdminAuth, update)
+competitionTypeRouter.put(
+  '/:id',
+  checkAdminAuth,
+  param('id')
+    .notEmpty()
+    .withMessage('El id de tipo competencia es requerido')
+    .isMongoId()
+    .withMessage('ID de tipo competencia inválido'),
+  update
+)
 
 /**
  * @openapi
@@ -291,6 +388,33 @@ competitionTypeRouter.put('/:id', checkAdminAuth, update)
  *                    rules:
  *                      type: string
  *                      description: Descripcion de las regla del tipo de competencia.
+ *      400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: ID de tipo competencia inválido
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: params
  *      404:
  *         description: Not Found
  *         content:
@@ -312,7 +436,16 @@ competitionTypeRouter.put('/:id', checkAdminAuth, update)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-competitionTypeRouter.patch('/:id', checkAdminAuth, update)
+competitionTypeRouter.patch(
+  '/:id',
+  checkAdminAuth,
+  param('id')
+    .notEmpty()
+    .withMessage('El id de tipo competencia es requerido')
+    .isMongoId()
+    .withMessage('ID de tipo competencia inválido'),
+  update
+)
 
 /**
  * @openapi
@@ -350,6 +483,33 @@ competitionTypeRouter.patch('/:id', checkAdminAuth, update)
  *                    rules:
  *                      type: string
  *                      description: Descripcion de las reglas del tipo de competencia.
+ *      400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: ID de tipo competencia inválido
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: params
  *      404:
  *         description: Not Found
  *         content:
@@ -381,4 +541,13 @@ competitionTypeRouter.patch('/:id', checkAdminAuth, update)
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-competitionTypeRouter.delete('/:id', checkAdminAuth, remove)
+competitionTypeRouter.delete(
+  '/:id',
+  checkAdminAuth,
+  param('id')
+    .notEmpty()
+    .withMessage('El id de tipo competencia es requerido')
+    .isMongoId()
+    .withMessage('ID de tipo competencia inválido'),
+  remove
+)

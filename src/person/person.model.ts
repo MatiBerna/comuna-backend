@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb'
 import { Schema, model } from 'mongoose'
 
 export interface IPerson {
@@ -17,9 +16,9 @@ const personSchema = new Schema<IPerson>(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     phone: { type: String },
-    email: { type: String, unique: true },
-    birthdate: { type: Date },
-    password: { type: String },
+    email: { type: String, required: true, unique: true },
+    birthdate: { type: Date, required: true },
+    password: { type: String, required: true },
   },
   { timestamps: true, versionKey: false, collection: 'persons' }
 )
