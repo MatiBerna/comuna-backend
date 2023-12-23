@@ -1,11 +1,9 @@
-import { Response, Request, NextFunction } from 'express'
-//import { CompetitionTypeRepository } from './competition-type.repository.js'
+import { Response, Request } from 'express'
 import CompetitionType from './competition-type.model.js'
 import { MongoServerError } from 'mongodb'
 import mongoose from 'mongoose'
 import Competition from '../competition/competition.model.js'
-
-//const repository = new CompetitionTypeRepository()
+import { Result, validationResult } from 'express-validator'
 
 export async function findAll(req: Request, res: Response) {
   const competitionTypes = await CompetitionType.find()
@@ -13,6 +11,12 @@ export async function findAll(req: Request, res: Response) {
 }
 
 export async function findOne(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
   try {
     const competitionType = await CompetitionType.findById(req.params.id)
 
@@ -32,7 +36,12 @@ export async function findOne(req: Request, res: Response) {
 }
 
 export async function add(req: Request, res: Response) {
-  //const competitionTypeInput = new CompetitionType(input.description, input.rules)
+  const result: Result = validationResult(req)
+  const errors = result.array()
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+
   const competitionTypeInput = new CompetitionType(req.body)
 
   try {
@@ -49,6 +58,12 @@ export async function add(req: Request, res: Response) {
 }
 
 export async function update(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
   try {
     const competitionType = await CompetitionType.findByIdAndUpdate(req.params.id, req.body, { new: true })
 
@@ -69,6 +84,13 @@ export async function update(req: Request, res: Response) {
 
 export async function remove(req: Request, res: Response) {
   const id = req.params.id
+
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
 
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {

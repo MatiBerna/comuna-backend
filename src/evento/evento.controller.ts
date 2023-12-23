@@ -3,6 +3,7 @@ import Evento from './evento.model.js'
 import { MongoServerError } from 'mongodb'
 import mongoose from 'mongoose'
 import Competition from '../competition/competition.model.js'
+import { Result, validationResult } from 'express-validator'
 
 export async function findAll(req: Request, res: Response) {
   const prox = req.query.prox
@@ -15,6 +16,12 @@ export async function findAll(req: Request, res: Response) {
 }
 
 export async function findOne(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
   try {
     const evento = await Evento.findById(req.params.id)
 
@@ -34,36 +41,47 @@ export async function findOne(req: Request, res: Response) {
 }
 
 export async function add(req: Request, res: Response) {
-  if (req.body.fechaHoraIni && new Date(req.body.fechaHoraIni).toString() === 'Invalid Date') {
-    return res.status(400).send({ message: 'La fecha de inicio debe ser una fecha valida' })
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
   }
-  if (req.body.fechaHoraFin && new Date(req.body.fechaHoraFin).toString() === 'Invalid Date') {
-    return res.status(400).send({ message: 'La fecha de fin estimada debe ser una fecha valida' })
-  }
+
   const eventoInput = new Evento(req.body)
 
   try {
-    if (eventoInput.fechaHoraIni && eventoInput.fechaHoraFin) {
-      if (eventoInput.fechaHoraIni > eventoInput.fechaHoraFin) {
-        return res.status(400).send({ message: 'La fecha de fin no puede ser anterior a la fecha de inicio' })
+    if (eventoInput.fechaHoraIni > eventoInput.fechaHoraFin) {
+      const fechaError = {
+        type: 'field',
+        value: eventoInput.fechaHoraIni,
+        msg: 'La fecha y hora de fin debe ser posterior a la fecha y hora de inicio',
+        path: 'fechaHoraIni',
+        location: 'body',
       }
-      if (eventoInput.fechaHoraIni.getTime() < Date.now()) {
-        return res.status(400).send({ message: 'Las fechas y horas no pueden ser anteriores a la fecha actual' })
+      errors.push(fechaError)
+    }
+    if (eventoInput.fechaHoraIni.getTime() < Date.now()) {
+      const fechaError = {
+        type: 'field',
+        value: eventoInput.fechaHoraIni,
+        msg: 'Las fechas y horas no pueden ser anteriores a la fecha actual',
+        path: 'fechaHoraIni',
+        location: 'body',
       }
+      errors.push(fechaError)
+    }
 
-      const solapados = await Evento.find({
-        $nor: [{ fechaHoraIni: { $gte: eventoInput.fechaHoraFin } }, { fechaHoraFin: { $lte: eventoInput.fechaHoraIni } }],
-      })
+    const solapados = await Evento.find({
+      $nor: [{ fechaHoraIni: { $gte: eventoInput.fechaHoraFin } }, { fechaHoraFin: { $lte: eventoInput.fechaHoraIni } }],
+    })
 
-      if (solapados.length !== 0) {
-        return res.status(409).send({ message: 'Los horarios del evento se solapan con uno cargado anteriormente' })
-      }
-    } else {
-      if (eventoInput.fechaHoraIni) {
-        return res.status(400).send({ message: 'La fecha de fin es un atributo requerido' })
-      } else {
-        return res.status(400).send({ message: 'La fecha de inicio es un atributo requerido' })
-      }
+    if (errors.length !== 0) {
+      return res.status(400).json({ errors: errors })
+    }
+
+    if (solapados.length !== 0) {
+      return res.status(409).send({ message: 'Los horarios del evento se solapan con uno cargado anteriormente' })
     }
 
     const evento = await eventoInput.save()
@@ -80,69 +98,65 @@ export async function add(req: Request, res: Response) {
 }
 
 export async function update(req: Request, res: Response) {
-  try {
-    //verifico que se pasen como parametros fecha hora ini y fin
-    if (req.body.fechaHoraIni && req.body.fechaHoraFin) {
-      if (new Date(req.body.fechaHoraIni).toString() === 'Invalid Date') {
-        return res.status(400).send({ message: 'La fecha de inicio debe ser una fecha valida' })
-      }
-      if (new Date(req.body.fechaHoraFin).toString() === 'Invalid Date') {
-        return res.status(400).send({ message: 'La fecha de fin debe ser una fecha valida' })
-      }
-      //hora inicio mayor a hora fin, imposible
-      if (req.body.fechaHoraIni > req.body.fechaHoraFin) {
-        return res.status(400).send({ message: 'La fecha de fin no puede ser anterior a la fecha de inicio' })
-      }
-      //creo nueva fecha con la obtenida
-      const fechaHoraIni: Date = new Date(req.body.fechaHoraIni)
+  const result: Result = validationResult(req)
+  const errors = result.array()
 
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(404).send({ message: 'Evento no encontrado' })
+  }
+
+  try {
+    const evento = await Evento.findById(req.params.id)
+
+    if (evento) {
+      if (req.body.fechaHoraFin || evento.fechaHoraFin < req.body.fechaHoraIni || evento.fechaHoraIni) {
+        const fechaError = {
+          type: 'field',
+          value: req.body.fechaHoraIni,
+          msg: 'La fecha y hora de fin debe ser posterior a la fecha y hora de inicio',
+          path: 'fechaHoraIni',
+          location: 'body',
+        }
+        errors.push(fechaError)
+      }
+
+      const fechaHoraIni: Date = new Date(req.body.fechaHoraIni || evento.fechaHoraIni)
       const timestamp: number = fechaHoraIni.getTime()
       if (timestamp < Date.now()) {
-        return res.status(400).send({ message: 'Las fechas no pueden ser anteriores a la fecha actual' })
+        const fechaError = {
+          type: 'field',
+          value: fechaHoraIni,
+          msg: 'Las fechas y horas no pueden ser anteriores a la fecha actual',
+          path: 'fechaHoraIni',
+          location: 'body',
+        }
+        errors.push(fechaError)
       }
-      //busco solapados
-      const solapados = await findSolapados(req.body.fechaHoraIni, req.body.fechaHoraFin, req.params.id)
+      const solapados = await findSolapados(
+        req.body.fechaHoraIni || evento.fechaHoraIni,
+        req.body.fechaHoraFin || evento.fechaHoraFin,
+        req.params.id
+      )
 
       if (solapados.length !== 0) {
         return res.status(409).send({ message: 'Los horarios del evento se solapan con uno cargado anteriormente' })
       }
-    } else if (req.body.fechaHoraIni) {
-      if (new Date(req.body.fechaHoraIni).toString() === 'Invalid Date') {
-        return res.status(400).send({ message: 'La fecha de inicio debe ser una fecha valida' })
-      }
-      const evento = await Evento.findById(req.params.id)
+    } else {
+      return res.status(404).send({ message: 'Evento no encontrado' })
+    }
 
-      if (evento) {
-        if (evento.fechaHoraFin < req.body.fechaHoraIni) {
-          return res.status(400).send({ message: 'La fecha de fin no puede ser anterior a la fecha de inicio' })
-        }
-
-        const solapados = await findSolapados(req.body.fechaHoraIni, evento.fechaHoraFin, req.params.id)
-
-        if (solapados.length !== 0) {
-          return res.status(409).send({ message: 'Los horarios del evento se solapan con uno cargado anteriormente' })
-        }
-      }
-    } else if (req.body.fechaHoraFin) {
-      if (new Date(req.body.fechaHoraFin).toString() === 'Invalid Date') {
-        return res.status(400).send({ message: 'La fecha de fin debe ser una fecha valida' })
-      }
-      const evento = await Evento.findById(req.params.id)
-
-      if (evento) {
-        if (evento.fechaHoraFin < req.body.fechaHoraIni) {
-          return res.status(400).send({ message: 'La fecha de fin no puede ser anterior a la fecha de inicio' })
-        }
-
-        const solapados = await findSolapados(evento.fechaHoraIni, req.body.fechaHoraFin, req.params.id)
-
-        if (solapados.length !== 0) {
-          return res.status(409).send({ message: 'Los horarios del evento se solapan con uno cargado anteriormente' })
-        }
-      }
+    if (errors.length !== 0) {
+      return res.status(400).send({ errors: errors })
     }
 
     const mEvento = await Evento.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    if (!mEvento) {
+      return res.status(404).send({ message: 'Evento no encontrado' })
+    }
     res.json(mEvento)
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {
@@ -155,6 +169,12 @@ export async function update(req: Request, res: Response) {
 }
 
 export async function remove(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(404).send({ message: 'Evento no encontrado' })

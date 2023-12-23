@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { add, findAll, findOne, remove, update } from './evento.controller.js'
+import { checkSchema, param } from 'express-validator'
 
 export const eventoRouter = Router()
 
@@ -79,6 +80,33 @@ eventoRouter.get('/', findAll)
  *                         type: string
  *                         format: date
  *                         description: Fecha y hora de fin del evento.
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: ID de evento inválido
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: params
  *       404:
  *        description: Not Found
  *        content:
@@ -100,7 +128,11 @@ eventoRouter.get('/', findAll)
  *                  type: string
  *                  example: Error interno en el servidor de datos
  */
-eventoRouter.get('/:id', findOne)
+eventoRouter.get(
+  '/:id',
+  param('id').notEmpty().withMessage('El id de evento es requerido').isMongoId().withMessage('ID de evento inválido'),
+  findOne
+)
 
 /**
  * @openapi
@@ -156,15 +188,32 @@ eventoRouter.get('/:id', findOne)
  *                      format: date
  *                      description: Fecha y hora fin del evento
  *      400:
- *        description: Bad Request
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                message:
- *                  type: string
- *                  example: La fecha de inicio debe ser una fecha valida
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: ""
+ *                      msg:
+ *                        type: string
+ *                        example: La decripción es requerida
+ *                      path:
+ *                        type: string
+ *                        example: description
+ *                      location:
+ *                        type: string
+ *                        example: body
  *      409:
  *        description: Confict
  *        content:
@@ -186,7 +235,23 @@ eventoRouter.get('/:id', findOne)
  *                  type: string
  *                  example: Error interno del servidor de Datos
  */
-eventoRouter.post('/', add)
+eventoRouter.post(
+  '/',
+  checkSchema({
+    description: { trim: true, notEmpty: { errorMessage: 'La descripción es requerida' } },
+    fechaHoraIni: {
+      trim: true,
+      notEmpty: { errorMessage: 'La fecha y hora de inicio es requerida', bail: true },
+      isISO8601: { errorMessage: 'La fecha y hora de inicio no es válida' },
+    },
+    fechaHoraFin: {
+      trim: true,
+      notEmpty: { errorMessage: 'La fecha y hora de inicio es requerida', bail: true },
+      isISO8601: { errorMessage: 'La fecha y hora de inicio no es válida' },
+    },
+  }),
+  add
+)
 
 /**
  * @openapi
@@ -243,15 +308,32 @@ eventoRouter.post('/', add)
  *                  format: date
  *                  description: Fecha y hora de fin del evento.
  *      400:
- *        description: Bad Request
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                message:
- *                  type: string
- *                  example: La fecha de fin no puede ser anterior a la fecha de inicio
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: 2023-12-24:00:3000.000Z
+ *                      msg:
+ *                        type: string
+ *                        example: La fecha y hora de inicio no es válida
+ *                      path:
+ *                        type: string
+ *                        example: fechaHoraIni
+ *                      location:
+ *                        type: string
+ *                        example: body
  *      404:
  *        description: Not Found
  *        content:
@@ -283,7 +365,24 @@ eventoRouter.post('/', add)
  *                  type: string
  *                  example: Error interno del servidor de Datos
  */
-eventoRouter.put('/:id', update)
+eventoRouter.put(
+  '/:id',
+  param('id').notEmpty().withMessage('El id de evento es requerido').isMongoId().withMessage('ID de evento inválido'),
+  checkSchema({
+    description: { trim: true, optional: true },
+    fechaHoraIni: {
+      trim: true,
+      optional: true,
+      isISO8601: { errorMessage: 'La fecha y hora de inicio no es válida' },
+    },
+    fechaHoraFin: {
+      trim: true,
+      optional: true,
+      isISO8601: { errorMessage: 'La fecha y hora de inicio no es válida' },
+    },
+  }),
+  update
+)
 
 /**
  * @openapi
@@ -340,15 +439,32 @@ eventoRouter.put('/:id', update)
  *                  format: date
  *                  description: Fecha y hora de fin del evento.
  *      400:
- *        description: Bad Request
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                message:
- *                  type: string
- *                  example: La fecha de fin no puede ser anterior a la fecha de inicio
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: 2023-12-24:00:3000.000Z
+ *                      msg:
+ *                        type: string
+ *                        example: La fecha y hora de inicio no es válida
+ *                      path:
+ *                        type: string
+ *                        example: fechaHoraIni
+ *                      location:
+ *                        type: string
+ *                        example: body
  *      404:
  *        description: Not Found
  *        content:
@@ -380,7 +496,24 @@ eventoRouter.put('/:id', update)
  *                  type: string
  *                  example: Error interno del servidor de Datos
  */
-eventoRouter.patch('/:id', update)
+eventoRouter.patch(
+  '/:id',
+  param('id').notEmpty().withMessage('El id de evento es requerido').isMongoId().withMessage('ID de evento inválido'),
+  checkSchema({
+    description: { trim: true, optional: true },
+    fechaHoraIni: {
+      trim: true,
+      optional: true,
+      isISO8601: { errorMessage: 'La fecha y hora de inicio no es válida' },
+    },
+    fechaHoraFin: {
+      trim: true,
+      optional: true,
+      isISO8601: { errorMessage: 'La fecha y hora de inicio no es válida' },
+    },
+  }),
+  update
+)
 
 /**
  * @openapi
@@ -424,6 +557,33 @@ eventoRouter.patch('/:id', update)
  *                      type: string
  *                      format: date
  *                      description: Fecha y hora fin del evento
+ *      400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: ID de evento inválido
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: params
  *      404:
  *        description: Not Found
  *        content:
@@ -455,4 +615,8 @@ eventoRouter.patch('/:id', update)
  *                  type: string
  *                  example: Error interno del servidor de Datos
  */
-eventoRouter.delete('/:id', remove)
+eventoRouter.delete(
+  '/:id',
+  param('id').notEmpty().withMessage('El id de evento es requerido').isMongoId().withMessage('ID de evento inválido'),
+  remove
+)

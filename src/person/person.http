@@ -13,9 +13,9 @@ Content-Type: application/json
   "firstName": "Matias",
   "lastName": "Bernardi",
   "phone": "3329577636",
-  "email": "matias.bernardi.1@gmail1.com",
+  "email": "matias.bernardi.1@gmail.com",
   "birthdate": "2003-04-23T18:25:43.510Z",
-  "password": "hola123456",
+  "password": "hola123456"
 }
 
 ### modifico totalmente una persona

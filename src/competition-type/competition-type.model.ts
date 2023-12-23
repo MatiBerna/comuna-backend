@@ -1,9 +1,4 @@
-import { ObjectId } from 'mongodb'
 import { Schema, model } from 'mongoose'
-
-// export class CompetitionType {
-//   constructor(public description: string, public rules: string, public _id?: ObjectId) {}
-// }
 
 export interface ICompetitionType {
   _id: string

@@ -5,10 +5,8 @@ import { ObjectId } from 'mongodb'
 
 export interface ICompetition {
   _id: ObjectId
-  _idCompetitionType?: string
-  _idEvento?: string
-  evento?: IEvento
-  competitionType?: ICompetitionType
+  competitionType: ObjectId | ICompetitionType
+  evento: ObjectId | IEvento
   descripcion: string
   fechaHoraIni: Date
   fechaHoraFinEstimada: Date
@@ -18,8 +16,8 @@ export interface ICompetition {
 
 const competitionSchema = new Schema(
   {
-    _idCompetitionType: { type: String, required: true },
-    _idEvento: { type: String, required: true },
+    competitionType: { type: Schema.Types.ObjectId, ref: 'CompetitionType', required: true },
+    evento: { type: Schema.Types.ObjectId, ref: 'Evento', required: true },
     descripcion: { type: String, required: true },
     fechaHoraIni: { type: Date, required: true },
     fechaHoraFinEstimada: { type: Date, required: true },
@@ -28,6 +26,6 @@ const competitionSchema = new Schema(
   },
   { versionKey: false, timestamps: true }
 )
-competitionSchema.index({ _idCompetitionType: 1, _idEvento: 1 }, { unique: true })
+competitionSchema.index({ competitionType: 1, evento: 1 }, { unique: true })
 
 export default model('Competition', competitionSchema)

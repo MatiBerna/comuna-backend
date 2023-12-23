@@ -5,6 +5,7 @@ import { MongoServerError } from 'mongodb'
 import { decodeSign } from '../helpers/generateToken.js'
 import { JwtPayload } from 'jsonwebtoken'
 import mongoose from 'mongoose'
+import { Result, validationResult } from 'express-validator'
 
 export async function add(req: Request, res: Response) {
   const adminInput = new Admin(req.body)
@@ -17,16 +18,15 @@ export async function add(req: Request, res: Response) {
     return res.status(401).send({ message: 'No tienes permiso de super admin' })
   }
 
-  if (adminInput.password) {
-    const hashedPassword = await hash(adminInput.password, 10)
-    adminInput.password = hashedPassword
-  } else {
-    return res.status(400).send({ message: 'Datos incompletos' })
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
   }
 
-  if (!adminInput.username) {
-    return res.status(400).send({ message: 'Datos incompletos' })
-  }
+  const hashedPassword = await hash(adminInput.password!, 10)
+  adminInput.password = hashedPassword
 
   //para que ningun admin se pase de vivo
   if (adminInput.role) {
@@ -41,7 +41,7 @@ export async function add(req: Request, res: Response) {
   } catch (err) {
     const mongoErr: MongoServerError = err as MongoServerError
     if (mongoErr.code === 11000) {
-      return res.status(400).send({ message: 'Nombre de Usuario Repetido' })
+      return res.status(409).send({ message: 'El Nombre de Usuario ya está en uso' })
     } else {
       console.log(err)
       return res.status(500).send({ message: 'Error interno del servidor de Datos' })
@@ -60,6 +60,12 @@ export async function findAll(req: Request, res: Response) {
 }
 
 export async function findOne(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
   try {
     const admin = await Admin.findById(req.params.id).select('-password')
 
@@ -86,6 +92,13 @@ export async function update(req: Request, res: Response) {
     return res.status(401).send({ message: 'No tienes permiso para actualizar administradores' })
   }
 
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+
   if (req.body.password) {
     const hashedPassword = await hash(req.body.password, 10)
     req.body.password = hashedPassword
@@ -107,7 +120,7 @@ export async function update(req: Request, res: Response) {
   } catch (err) {
     const mongoErr: MongoServerError = err as MongoServerError
     if (mongoErr.code === 11000) {
-      return res.status(400).send({ message: 'Nombre de Usuario Repetido' })
+      return res.status(409).send({ message: 'En Nombre de Usuario ya está en uso' })
     } else {
       if (err instanceof Error && err.name === 'CastError') {
         return res.status(404).send({ message: 'Admin no encontrado' })
@@ -122,10 +135,6 @@ export async function update(req: Request, res: Response) {
 export async function remove(req: Request, res: Response) {
   const id = req.params.id
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).send({ message: 'Admin no encontrado' })
-  }
-
   const token = String(req.headers.authorization?.split(' ').pop())
   const rta = await checkSARole(token)
 
@@ -133,10 +142,17 @@ export async function remove(req: Request, res: Response) {
     return res.status(401).send({ message: 'No tienes permiso para borrar administradores' })
   }
 
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+
   try {
     const adminToDelete = await Admin.findById(id)
     if (adminToDelete && adminToDelete.role === 'SA') {
-      return res.status(400).send({ message: 'No es posible borrar a este administrador' })
+      return res.status(401).send({ message: 'No es posible borrar a este administrador' })
     }
 
     const admin = await Admin.findByIdAndDelete(id).select('-password')
