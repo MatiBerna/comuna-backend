@@ -92,6 +92,11 @@ personRouter.get('/', checkAdminAuth, findAll)
  *           type: string
  *         required: true
  *         description: ID de la persona a devolver.
+ *       - in: header
+ *         name: Authorization
+ *         schema:
+ *           type: string
+ *         description: Token de autorización.
  *     responses:
  *       200:
  *         description: OK
@@ -172,6 +177,7 @@ personRouter.get('/', checkAdminAuth, findAll)
  */
 personRouter.get(
   '/:id',
+  checkPersonAuth,
   param('id').notEmpty().withMessage('El id de persona es requerido').isMongoId().withMessage('ID de persona inválido'),
   findOne
 )
@@ -341,6 +347,11 @@ personRouter.post(
  *           type: string
  *         required: true
  *         description: ID de la persona a actualizar.
+ *       - in: header
+ *         name: Authorization
+ *         schema:
+ *           type: string
+ *         description: Token de autorización.
  *     requestBody:
  *       required: true
  *       content:
@@ -516,7 +527,12 @@ personRouter.put(
  *         schema:
  *           type: string
  *         required: true
- *         description: The ID of the person to update.
+ *         description: ID de la persona a actualizar.
+ *       - in: header
+ *         name: Authorization
+ *         schema:
+ *           type: string
+ *         description: Token de autorización.
  *     requestBody:
  *       required: true
  *       content:
@@ -691,6 +707,11 @@ personRouter.patch(
  *           type: string
  *         required: true
  *         description: ID de la persona a eliminar.
+ *       - in: header
+ *         name: Authorization
+ *         schema:
+ *           type: string
+ *         description: Token de autorización.
  *     responses:
  *       200:
  *         description: OK
@@ -777,6 +798,7 @@ personRouter.patch(
  */
 personRouter.delete(
   '/:id',
+  checkPersonAuth,
   param('id').notEmpty().withMessage('El id de persona es requerido').isMongoId().withMessage('ID de persona inválido'),
   remove
 )
