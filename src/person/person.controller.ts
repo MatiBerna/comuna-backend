@@ -1,12 +1,8 @@
-import { Response, Request, NextFunction } from 'express'
+import { Response, Request } from 'express'
 import { hash } from 'bcrypt-ts'
-import Person, { IPerson } from './person.model.js'
+import Person from './person.model.js'
 import { MongoServerError } from 'mongodb'
 import { Result, validationResult } from 'express-validator'
-import mongoose from 'mongoose'
-import { JwtPayload } from 'jsonwebtoken'
-import { decodeSign } from '../helpers/generateToken.js'
-import Admin, { IAdmin } from '../admin/admin.model.js'
 
 export async function findAll(req: Request, res: Response) {
   var filter = req.query.filter
@@ -35,11 +31,6 @@ export async function findOne(req: Request, res: Response) {
     return res.status(400).json({ errors: errors })
   }
 
-  const rta: boolean = await checkRoles(req)
-
-  if (!rta) {
-    return res.status(401).send({ message: 'No tienes permiso' })
-  }
   try {
     const person = await Person.findById(req.params.id).select('-password')
 
@@ -103,11 +94,6 @@ export async function update(req: Request, res: Response) {
     return res.status(400).json({ errors: errors })
   }
 
-  const rta: boolean = await checkRoles(req)
-
-  if (!rta) {
-    return res.status(401).send({ message: 'No tienes permiso para modificar personas' })
-  }
   try {
     if (req.body.password) {
       const hashedPassword = await hash(req.body.password, 10)
@@ -151,19 +137,13 @@ export async function remove(req: Request, res: Response) {
     return res.status(400).json({ errors: errors })
   }
 
-  //valida rol o si es misma persona
-  const rta: boolean = await checkRoles(req)
-
-  if (!rta) {
-    return res.status(401).send({ message: 'No tienes permiso para eliminar personas' })
-  }
-
   try {
     const person = await Person.findByIdAndDelete(id)
 
     if (!person) {
       return res.status(404).send({ message: 'Persona no encontrada' })
     }
+    console.log('asdjfkasjdkfjaskdjf')
     return res.status(200).send({ message: 'Persona eliminada', data: person })
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {
@@ -174,23 +154,4 @@ export async function remove(req: Request, res: Response) {
       return res.status(500).send({ message: 'Error interno del servidor de Datos' })
     }
   }
-}
-
-//devueve false si no tiene permiso, true si tiene permiso
-async function checkRoles(req: Request): Promise<boolean> {
-  const token = String(req.headers.authorization?.split(' ').pop())
-  const userData = (decodeSign(token) as JwtPayload).user
-
-  const personToRemove = await Person.findById(req.params.id)
-
-  if (personToRemove) {
-    if ('dni' in userData && userData._id !== personToRemove._id.toString()) {
-      return false
-    } else if ('dni' in userData && userData._id === personToRemove._id.toString()) {
-      return true
-    } else if ('username' in userData) {
-      return true
-    }
-  }
-  return false
 }

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { add, findAll, findOne, remove, update } from './evento.controller.js'
 import { checkSchema, param } from 'express-validator'
+import { checkAdminAuth } from '../auth/auth.middleware.js'
 
 export const eventoRouter = Router()
 
@@ -237,6 +238,7 @@ eventoRouter.get(
  */
 eventoRouter.post(
   '/',
+  checkAdminAuth,
   checkSchema({
     description: { trim: true, notEmpty: { errorMessage: 'La descripción es requerida' } },
     fechaHoraIni: {
@@ -367,6 +369,7 @@ eventoRouter.post(
  */
 eventoRouter.put(
   '/:id',
+  checkAdminAuth,
   param('id').notEmpty().withMessage('El id de evento es requerido').isMongoId().withMessage('ID de evento inválido'),
   checkSchema({
     description: { trim: true, optional: true },
@@ -498,6 +501,7 @@ eventoRouter.put(
  */
 eventoRouter.patch(
   '/:id',
+  checkAdminAuth,
   param('id').notEmpty().withMessage('El id de evento es requerido').isMongoId().withMessage('ID de evento inválido'),
   checkSchema({
     description: { trim: true, optional: true },
@@ -617,6 +621,7 @@ eventoRouter.patch(
  */
 eventoRouter.delete(
   '/:id',
+  checkAdminAuth,
   param('id').notEmpty().withMessage('El id de evento es requerido').isMongoId().withMessage('ID de evento inválido'),
   remove
 )

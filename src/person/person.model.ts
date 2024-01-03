@@ -1,6 +1,8 @@
+import { ObjectId } from 'mongodb'
 import { Schema, model } from 'mongoose'
 
 export interface IPerson {
+  _id: ObjectId
   dni: string
   firstName: string
   lastName: string
