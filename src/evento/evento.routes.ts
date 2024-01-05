@@ -28,6 +28,9 @@ export const eventoRouter = Router()
  *                       description:
  *                         type: string
  *                         description: Descripcion del evento (nombre o movito del evento)
+ *                       image:
+ *                         type: string
+ *                         description: URL de la imagen del evento
  *                       fechaHoraIni:
  *                         type: string
  *                         format: date
@@ -73,6 +76,9 @@ eventoRouter.get('/', findAll)
  *                       description:
  *                         type: string
  *                         description: Descripcion del evento (nombre o movito del evento)
+ *                       image:
+ *                         type: string
+ *                         description: URL de la imagen del evento
  *                       fechaHoraIni:
  *                         type: string
  *                         format: date
@@ -152,6 +158,9 @@ eventoRouter.get(
  *              description:
  *                type: string
  *                description: Descripcion del evento (nombre o motivo del mismo)
+ *              image:
+ *                type: string
+ *                description: URL de la imagen del evento
  *              fechaHoraIni:
  *                type: string
  *                format: date
@@ -251,6 +260,11 @@ eventoRouter.post(
       notEmpty: { errorMessage: 'La fecha y hora de inicio es requerida', bail: true },
       isISO8601: { errorMessage: 'La fecha y hora de inicio no es válida' },
     },
+    image: {
+      trim: true,
+      notEmpty: { errorMessage: 'La URL de la imagen es requerida', bail: true },
+      isURL: { errorMessage: 'El campo imagen debe ser una URL válida' },
+    },
   }),
   add
 )
@@ -279,6 +293,9 @@ eventoRouter.post(
  *              description:
  *                type: string
  *                description: Descripcion del evento (nombre o motivo del mismo)
+ *              image:
+ *                type: string
+ *                description: URL de la imagen del evento
  *              fechaHoraIni:
  *                type: string
  *                format: date
@@ -383,6 +400,11 @@ eventoRouter.put(
       optional: true,
       isISO8601: { errorMessage: 'La fecha y hora de inicio no es válida' },
     },
+    image: {
+      trim: true,
+      optional: true,
+      isURL: { errorMessage: 'El campo imagen debe ser una URL válida' },
+    },
   }),
   update
 )
@@ -411,6 +433,9 @@ eventoRouter.put(
  *              description:
  *                type: string
  *                description: Descripcion del evento (nombre o motivo del mismo)
+ *              image:
+ *                type: string
+ *                description: URL de la imagen del evento
  *              fechaHoraIni:
  *                type: string
  *                format: date
@@ -515,6 +540,11 @@ eventoRouter.patch(
       optional: true,
       isISO8601: { errorMessage: 'La fecha y hora de inicio no es válida' },
     },
+    image: {
+      trim: true,
+      optional: true,
+      isURL: { errorMessage: 'El campo imagen debe ser una URL válida' },
+    },
   }),
   update
 )
@@ -553,6 +583,9 @@ eventoRouter.patch(
  *                    description:
  *                      type: string
  *                      description: Descripcion del evento (nombre o motivo del mismo)
+ *                    image:
+ *                      type: string
+ *                      description: URL de la imagen del evento
  *                    fechaHoraIni:
  *                      type: string
  *                      format: date

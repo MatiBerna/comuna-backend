@@ -113,7 +113,7 @@ export async function update(req: Request, res: Response) {
     const evento = await Evento.findById(req.params.id)
 
     if (evento) {
-      if (req.body.fechaHoraFin || evento.fechaHoraFin < req.body.fechaHoraIni || evento.fechaHoraIni) {
+      if ((req.body.fechaHoraFin || evento.fechaHoraFin) < (req.body.fechaHoraIni || evento.fechaHoraIni)) {
         const fechaError = {
           type: 'field',
           value: req.body.fechaHoraIni,
