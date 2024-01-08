@@ -179,7 +179,7 @@ export async function remove(req: Request, res: Response) {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(404).send({ message: 'Evento no encontrado' })
     }
-    const competenciasEvento = await Competition.find({ _idEvento: req.params.id })
+    const competenciasEvento = await Competition.find({ evento: req.params.id })
 
     if (competenciasEvento.length !== 0) {
       return res.status(409).send({ message: 'El evento tiene competencias cargadas' })

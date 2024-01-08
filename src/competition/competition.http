@@ -1,6 +1,6 @@
 ### busca todos
 
-GET http://localhost:3000/api/competition?prox=true
+GET http://localhost:3000/api/competition
 
 
 ### busca uno
@@ -34,6 +34,14 @@ Content-Type: application/json
   "fechaHoraFinEstimada": "2023-12-25T05:00:00.000Z",
   "premios": "Una champagne",
   "costoInscripcion": 21
+}
+
+### MODIFICA ALGUNOS
+PATCH http://localhost:3000/api/competition/656cdba8d88bacd44f628410
+Content-Type: application/json
+
+{
+  "competitionType": "659c4b8430e803d04bef96bb"
 }
 
 

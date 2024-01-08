@@ -3,7 +3,7 @@
 GET http://localhost:3000/api/evento
 
 ### busca uno
-GET http://localhost:3000/api/evento/6566145214a1a83b57231c01
+GET http://localhost:3000/api/evento/659c4b8430e803d04bef96bb
 
 
 ### añade 

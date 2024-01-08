@@ -675,7 +675,6 @@ competetitionRouter.put(
  */
 competetitionRouter.patch(
   '/:id',
-  checkAdminAuth,
   param('id').notEmpty().withMessage('El id de competencia es requerido').isMongoId().withMessage('ID de competencia inválido'),
   checkSchema({
     competitionType: {

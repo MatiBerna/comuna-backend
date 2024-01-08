@@ -97,7 +97,7 @@ export async function remove(req: Request, res: Response) {
       return res.status(404).send({ message: 'Tipo de competencia no encontrado' })
     }
 
-    const competitionsOfType = await Competition.find({ _idCompetitionType: id })
+    const competitionsOfType = await Competition.find({ competitionType: id })
 
     if (competitionsOfType.length !== 0) {
       return res.status(409).send({ message: 'Hay competencias del tipo seleccionado' })
