@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { add, findAll, findOne, remove, update } from './competition.controller.js'
 import { body, checkSchema, param } from 'express-validator'
+import { checkAdminAuth } from '../auth/auth.middleware.js'
 
 export const competetitionRouter = Router()
 
@@ -325,6 +326,7 @@ competetitionRouter.get(
  */
 competetitionRouter.post(
   '/',
+  checkAdminAuth,
   checkSchema({
     competitionType: {
       notEmpty: { errorMessage: 'El Id de Tipo de Competencia es requerido', bail: true },
@@ -497,6 +499,7 @@ competetitionRouter.post(
  */
 competetitionRouter.put(
   '/:id',
+  checkAdminAuth,
   param('id').notEmpty().withMessage('El id de competencia es requerido').isMongoId().withMessage('ID de competencia inválido'),
   checkSchema({
     competitionType: {
@@ -807,6 +810,7 @@ competetitionRouter.patch(
  */
 competetitionRouter.delete(
   '/:id',
+  checkAdminAuth,
   param('id').notEmpty().withMessage('El id de competencia es requerido').isMongoId().withMessage('ID de competencia inválido'),
   remove
 )

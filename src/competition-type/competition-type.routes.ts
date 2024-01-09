@@ -28,6 +28,9 @@ export const competitionTypeRouter = Router()
  *                  description:
  *                    type: string
  *                    description: Descripcion del tipo de competencia (nombre)
+ *                  image:
+ *                    type: string
+ *                    description: URL de la imagen del tipo de competencia
  *                  rules:
  *                    type: string
  *                    description: Descripcion de las reglas del tipo de competencia
@@ -61,6 +64,9 @@ competitionTypeRouter.get('/', findAll)
  *                decription:
  *                  type: string
  *                  description: Descripcion del tipo competencia (nombre).
+ *                image:
+ *                  type: string
+ *                  description: URL de la imagen del tipo de competencia
  *                rules:
  *                  type: string
  *                  description: Descripcion de las reglas del tipo de competencia.
@@ -168,6 +174,9 @@ competitionTypeRouter.get(
  *                    description:
  *                      type: string
  *                      description: Descripcion del tipo de competencia (nombre).
+ *                    image:
+ *                      type: string
+ *                      description: URL de la imagen del tipo de competencia
  *                    rules:
  *                      type: string
  *                      description: Descripcion de las regla del tipo de competencia.
@@ -214,6 +223,11 @@ competitionTypeRouter.post(
   checkAdminAuth,
   checkSchema({
     description: { trim: true, notEmpty: { errorMessage: 'La descripción es requerida' } },
+    image: {
+      trim: true,
+      notEmpty: { errorMessage: 'La URL de la imagen es requerida', bail: true },
+      isURL: { errorMessage: 'El campo imagen debe ser una URL válida' },
+    },
     rules: { trim: true, notEmpty: { errorMessage: 'El campo reglas es requerido' } },
   }),
   add
@@ -248,6 +262,9 @@ competitionTypeRouter.post(
  *              description:
  *                type: string
  *                description: Descripcion del tipo de competencia (nombre).
+ *              image:
+ *                type: string
+ *                description: URL de la imagen del tipo de competencia
  *              rules:
  *                type: string
  *                description: Descripcion de las reglas del tipo de competencia.
@@ -271,6 +288,9 @@ competitionTypeRouter.post(
  *                    description:
  *                      type: string
  *                      description: Descripcion del tipo de competencia (nombre).
+ *                    image:
+ *                      type: string
+ *                      description: URL de la imagen del tipo de competencia
  *                    rules:
  *                      type: string
  *                      description: Descripcion de las regla del tipo de competencia.
@@ -330,6 +350,13 @@ competitionTypeRouter.put(
     .withMessage('El id de tipo competencia es requerido')
     .isMongoId()
     .withMessage('ID de tipo competencia inválido'),
+  checkSchema({
+    image: {
+      trim: true,
+      optional: true,
+      isURL: { errorMessage: 'El campo imagen debe ser una URL válida' },
+    },
+  }),
   update
 )
 
@@ -385,6 +412,9 @@ competitionTypeRouter.put(
  *                    description:
  *                      type: string
  *                      description: Descripcion del tipo de competencia (nombre).
+ *                    image:
+ *                      type: string
+ *                      description: URL de la imagen del tipo de competencia
  *                    rules:
  *                      type: string
  *                      description: Descripcion de las regla del tipo de competencia.
@@ -444,6 +474,16 @@ competitionTypeRouter.patch(
     .withMessage('El id de tipo competencia es requerido')
     .isMongoId()
     .withMessage('ID de tipo competencia inválido'),
+  checkSchema({
+    image: {
+      trim: true,
+      optional: true,
+      isURL: { errorMessage: 'El campo imagen debe ser una URL válida' },
+    },
+    _id: {
+      trim: true,
+    },
+  }),
   update
 )
 
@@ -480,6 +520,9 @@ competitionTypeRouter.patch(
  *                    description:
  *                      type: string
  *                      description: Descripcion del tipo de competencia (nombre).
+ *                    image:
+ *                      type: string
+ *                      description: URL de la imagen del tipo de competencia
  *                    rules:
  *                      type: string
  *                      description: Descripcion de las reglas del tipo de competencia.

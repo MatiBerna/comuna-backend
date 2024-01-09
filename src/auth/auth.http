@@ -7,3 +7,12 @@ Content-Type: application/json
   "username": "admin",
   "password": "1234"
 }
+
+### LOGIN Personas
+POST http://localhost:3000/api/auth/user/login
+Content-Type: application/json
+
+{
+  "username": "matias.bernardi.1@gmail1.com",
+  "password": "hola123456"
+}

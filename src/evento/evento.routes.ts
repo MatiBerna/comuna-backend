@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { add, findAll, findOne, remove, update } from './evento.controller.js'
 import { checkSchema, param } from 'express-validator'
+import { checkAdminAuth } from '../auth/auth.middleware.js'
 
 export const eventoRouter = Router()
 
@@ -27,6 +28,9 @@ export const eventoRouter = Router()
  *                       description:
  *                         type: string
  *                         description: Descripcion del evento (nombre o movito del evento)
+ *                       image:
+ *                         type: string
+ *                         description: URL de la imagen del evento
  *                       fechaHoraIni:
  *                         type: string
  *                         format: date
@@ -72,6 +76,9 @@ eventoRouter.get('/', findAll)
  *                       description:
  *                         type: string
  *                         description: Descripcion del evento (nombre o movito del evento)
+ *                       image:
+ *                         type: string
+ *                         description: URL de la imagen del evento
  *                       fechaHoraIni:
  *                         type: string
  *                         format: date
@@ -151,6 +158,9 @@ eventoRouter.get(
  *              description:
  *                type: string
  *                description: Descripcion del evento (nombre o motivo del mismo)
+ *              image:
+ *                type: string
+ *                description: URL de la imagen del evento
  *              fechaHoraIni:
  *                type: string
  *                format: date
@@ -237,6 +247,7 @@ eventoRouter.get(
  */
 eventoRouter.post(
   '/',
+  checkAdminAuth,
   checkSchema({
     description: { trim: true, notEmpty: { errorMessage: 'La descripción es requerida' } },
     fechaHoraIni: {
@@ -248,6 +259,11 @@ eventoRouter.post(
       trim: true,
       notEmpty: { errorMessage: 'La fecha y hora de inicio es requerida', bail: true },
       isISO8601: { errorMessage: 'La fecha y hora de inicio no es válida' },
+    },
+    image: {
+      trim: true,
+      notEmpty: { errorMessage: 'La URL de la imagen es requerida', bail: true },
+      isURL: { errorMessage: 'El campo imagen debe ser una URL válida' },
     },
   }),
   add
@@ -277,6 +293,9 @@ eventoRouter.post(
  *              description:
  *                type: string
  *                description: Descripcion del evento (nombre o motivo del mismo)
+ *              image:
+ *                type: string
+ *                description: URL de la imagen del evento
  *              fechaHoraIni:
  *                type: string
  *                format: date
@@ -367,6 +386,7 @@ eventoRouter.post(
  */
 eventoRouter.put(
   '/:id',
+  checkAdminAuth,
   param('id').notEmpty().withMessage('El id de evento es requerido').isMongoId().withMessage('ID de evento inválido'),
   checkSchema({
     description: { trim: true, optional: true },
@@ -379,6 +399,11 @@ eventoRouter.put(
       trim: true,
       optional: true,
       isISO8601: { errorMessage: 'La fecha y hora de inicio no es válida' },
+    },
+    image: {
+      trim: true,
+      optional: true,
+      isURL: { errorMessage: 'El campo imagen debe ser una URL válida' },
     },
   }),
   update
@@ -408,6 +433,9 @@ eventoRouter.put(
  *              description:
  *                type: string
  *                description: Descripcion del evento (nombre o motivo del mismo)
+ *              image:
+ *                type: string
+ *                description: URL de la imagen del evento
  *              fechaHoraIni:
  *                type: string
  *                format: date
@@ -498,6 +526,7 @@ eventoRouter.put(
  */
 eventoRouter.patch(
   '/:id',
+  checkAdminAuth,
   param('id').notEmpty().withMessage('El id de evento es requerido').isMongoId().withMessage('ID de evento inválido'),
   checkSchema({
     description: { trim: true, optional: true },
@@ -510,6 +539,11 @@ eventoRouter.patch(
       trim: true,
       optional: true,
       isISO8601: { errorMessage: 'La fecha y hora de inicio no es válida' },
+    },
+    image: {
+      trim: true,
+      optional: true,
+      isURL: { errorMessage: 'El campo imagen debe ser una URL válida' },
     },
   }),
   update
@@ -549,6 +583,9 @@ eventoRouter.patch(
  *                    description:
  *                      type: string
  *                      description: Descripcion del evento (nombre o motivo del mismo)
+ *                    image:
+ *                      type: string
+ *                      description: URL de la imagen del evento
  *                    fechaHoraIni:
  *                      type: string
  *                      format: date
@@ -617,6 +654,7 @@ eventoRouter.patch(
  */
 eventoRouter.delete(
   '/:id',
+  checkAdminAuth,
   param('id').notEmpty().withMessage('El id de evento es requerido').isMongoId().withMessage('ID de evento inválido'),
   remove
 )

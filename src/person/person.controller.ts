@@ -1,9 +1,8 @@
 import { Response, Request } from 'express'
 import { hash } from 'bcrypt-ts'
-import Person, { IPerson } from './person.model.js'
+import Person from './person.model.js'
 import { MongoServerError } from 'mongodb'
 import { Result, validationResult } from 'express-validator'
-import mongoose from 'mongoose'
 
 export async function findAll(req: Request, res: Response) {
   var filter = req.query.filter
@@ -31,6 +30,7 @@ export async function findOne(req: Request, res: Response) {
   if (!result.isEmpty()) {
     return res.status(400).json({ errors: errors })
   }
+
   try {
     const person = await Person.findById(req.params.id).select('-password')
 
@@ -93,9 +93,7 @@ export async function update(req: Request, res: Response) {
   if (!result.isEmpty()) {
     return res.status(400).json({ errors: errors })
   }
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return res.status(404).send({ message: 'Persona no encontrada' })
-  }
+
   try {
     if (req.body.password) {
       const hashedPassword = await hash(req.body.password, 10)
@@ -131,6 +129,7 @@ export async function update(req: Request, res: Response) {
 export async function remove(req: Request, res: Response) {
   const id = req.params.id
 
+  //errores Bad Request
   const result: Result = validationResult(req)
   const errors = result.array()
 
@@ -144,6 +143,7 @@ export async function remove(req: Request, res: Response) {
     if (!person) {
       return res.status(404).send({ message: 'Persona no encontrada' })
     }
+    console.log('asdjfkasjdkfjaskdjf')
     return res.status(200).send({ message: 'Persona eliminada', data: person })
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {

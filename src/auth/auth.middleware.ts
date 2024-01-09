@@ -38,8 +38,18 @@ export async function checkPersonAuth(req: Request, res: Response, next: NextFun
 
     if (!personData) {
       checkAdminAuth(req, res, next)
-      //return res.status(401).send({ message: 'No tienes permiso' })
     } else {
+      if (req.params.id) {
+        const personToModify = (await Person.findById(req.params.id)) || undefined
+
+        if (personToModify) {
+          if (personData._id.toString() !== personToModify._id.toString()) {
+            return res.status(401).send({ message: 'No tienes permiso' })
+          } else if (personData._id.toString() === personToModify._id.toString()) {
+            return next()
+          }
+        }
+      }
       next()
     }
   } catch (err) {

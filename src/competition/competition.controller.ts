@@ -166,6 +166,11 @@ export async function update(req: Request, res: Response) {
         } else {
           return res.status(404).send({ message: 'Evento no encontrado' })
         }
+      } else {
+        const evento = await Evento.findById(req.body.evento || competencia.evento)
+        if (!evento) {
+          return res.status(404).send({ message: 'Evento no encontrado' })
+        }
       }
 
       const tipoCompetencia = await CompetitionType.findById(req.body.competitionType || competencia.competitionType)
