@@ -55,7 +55,7 @@ export async function add(req: Request, res: Response) {
       const fechaError = {
         type: 'field',
         value: eventoInput.fechaHoraIni,
-        msg: 'La fecha y hora de fin debe ser posterior a la fecha y hora de inicio',
+        msg: 'La fecha y hora de iinicio debe ser anterior a la fecha y hora de finw',
         path: 'fechaHoraIni',
         location: 'body',
       }
@@ -72,13 +72,13 @@ export async function add(req: Request, res: Response) {
       errors.push(fechaError)
     }
 
-    const solapados = await Evento.find({
-      $nor: [{ fechaHoraIni: { $gte: eventoInput.fechaHoraFin } }, { fechaHoraFin: { $lte: eventoInput.fechaHoraIni } }],
-    })
-
     if (errors.length !== 0) {
       return res.status(400).json({ errors: errors })
     }
+
+    const solapados = await Evento.find({
+      $nor: [{ fechaHoraIni: { $gte: eventoInput.fechaHoraFin } }, { fechaHoraFin: { $lte: eventoInput.fechaHoraIni } }],
+    })
 
     if (solapados.length !== 0) {
       return res.status(409).send({ message: 'Los horarios del evento se solapan con uno cargado anteriormente' })
