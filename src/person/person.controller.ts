@@ -19,6 +19,7 @@ export async function findAll(req: Request, res: Response) {
     page: page,
     limit: 10,
     select: '-password',
+    sort: { updatedAt: -1 },
   }
 
   if (filter) {
@@ -38,7 +39,6 @@ export async function findAll(req: Request, res: Response) {
 
   const persons = await Person.paginate({}, options)
 
-  //const persons = await Person.find().select('-password')
   res.json(persons)
 }
 
