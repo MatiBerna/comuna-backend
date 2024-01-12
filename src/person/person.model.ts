@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb'
-import { Schema, model } from 'mongoose'
+import { PaginateModel, Schema, model } from 'mongoose'
+import paginate from 'mongoose-paginate-v2'
 
 export interface IPerson {
   _id: ObjectId
@@ -25,4 +26,6 @@ const personSchema = new Schema<IPerson>(
   { timestamps: true, versionKey: false, collection: 'persons' }
 )
 
-export default model('Person', personSchema)
+personSchema.plugin(paginate)
+
+export default model<IPerson>('Person', personSchema) as PaginateModel<IPerson>
