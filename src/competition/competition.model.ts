@@ -1,7 +1,8 @@
-import { Schema, model } from 'mongoose'
+import { PaginateModel, Schema, model } from 'mongoose'
 import { IEvento } from '../evento/evento.model'
 import { ICompetitionType } from '../competition-type/competition-type.model'
 import { ObjectId } from 'mongodb'
+import paginate from 'mongoose-paginate-v2'
 
 export interface ICompetition {
   _id: ObjectId
@@ -28,4 +29,6 @@ const competitionSchema = new Schema(
 )
 competitionSchema.index({ competitionType: 1, evento: 1 }, { unique: true })
 
-export default model('Competition', competitionSchema)
+competitionSchema.plugin(paginate)
+
+export default model<ICompetition>('Competition', competitionSchema) as PaginateModel<ICompetition>

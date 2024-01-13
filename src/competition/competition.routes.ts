@@ -83,7 +83,20 @@ export const competetitionRouter = Router()
  *                    type: number
  *                    description: Costo de inscripcion (real, mayor o igual a 0)
  */
-competetitionRouter.get('/', findAll)
+competetitionRouter.get(
+  '/',
+  checkSchema(
+    {
+      page: {
+        trim: true,
+        notEmpty: { errorMessage: 'El número de página es requrido en query', bail: true },
+        isNumeric: { errorMessage: 'Número de página inválido' },
+      },
+    },
+    ['query']
+  ),
+  findAll
+)
 
 /**
  * @openapi

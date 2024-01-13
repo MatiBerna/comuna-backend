@@ -4,25 +4,35 @@ import { MongoServerError } from 'mongodb'
 import Evento, { IEvento } from '../evento/evento.model.js'
 import CompetitionType, { ICompetitionType } from '../competition-type/competition-type.model.js'
 import { Result, validationResult } from 'express-validator'
+import { PaginateOptions, PaginateResult } from 'mongoose'
 
 export async function findAll(req: Request, res: Response) {
-  let competitions: ICompetition[]
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+
+  const page = Number(req.query.page)
+
+  const options: PaginateOptions = {
+    page: page,
+    limit: 10,
+    sort: { fechaHoraIni: 1 },
+    populate: ['competitionType', 'evento'],
+  }
+
+  let competitions: PaginateResult<ICompetition>
 
   if (req.query.prox === 'true') {
-    competitions = await Competition.find({ fechaHoraIni: { $gte: Date.now() } })
-      .sort({ fechaHoraIni: 1 })
-      .populate('competitionType')
-      .populate('evento')
+    competitions = await Competition.paginate({ fechaHoraIni: { $gte: Date.now() } }, options)
   } else if (req.query.disp === 'true') {
     const now = Date.now()
     const twoDaysLater = now + 2 * 24 * 60 * 60 * 1000
-    competitions = await Competition.find({ fechaHoraIni: { $gte: now, $lte: twoDaysLater } })
-      .sort({ fechaHoraIni: 1 })
-      .populate('competitionType')
-      .populate('evento')
+    competitions = await Competition.paginate({ fechaHoraIni: { $gte: now, $lte: twoDaysLater } }, options)
   } else {
-    console.log('hola')
-    competitions = await Competition.find().sort({ fechaHoraIni: 1 }).populate('competitionType').populate('evento')
+    competitions = await Competition.paginate({}, options)
   }
 
   res.json(competitions)
