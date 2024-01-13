@@ -35,7 +35,20 @@ export const competitionTypeRouter = Router()
  *                    type: string
  *                    description: Descripcion de las reglas del tipo de competencia
  */
-competitionTypeRouter.get('/', findAll)
+competitionTypeRouter.get(
+  '/',
+  checkSchema(
+    {
+      page: {
+        trim: true,
+        optional: true,
+        isNumeric: { errorMessage: 'Número de página inválido' },
+      },
+    },
+    ['query']
+  ),
+  findAll
+)
 
 /**
  * @openapi
