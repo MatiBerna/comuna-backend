@@ -44,10 +44,11 @@ export async function findAll(req: Request, res: Response) {
   } else if (req.query.disp === 'true') {
     const now = Date.now()
     const twoDaysLater = now + 2 * 24 * 60 * 60 * 1000
+    const oneMonthLater = new Date(now).setMonth(new Date(now).getMonth() + 1)
     competitions = await Competition.paginate(
       {
         $and: [
-          { fechaHoraIni: { $gte: now, $lte: twoDaysLater } },
+          { fechaHoraIni: { $gte: now, $lte: oneMonthLater } },
           { evento: { $in: eventosFiltered } },
           { competitionType: { $in: compeTypeFiltered } },
         ],
