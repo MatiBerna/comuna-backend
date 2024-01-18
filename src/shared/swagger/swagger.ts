@@ -18,6 +18,7 @@ const options = {
       { name: 'Competition', description: 'Endpoint que maneja CRUD de Competencias' },
       { name: 'Auth', description: 'Endpoint que maneja logins y registers de dos tipos de usuario (Admin y user person)' },
       { name: 'Admin', description: 'Endpoint que maneja CRUD de Administradores' },
+      { name: 'Competitor', description: 'Endpoint que maneja inscripciones a competencias' },
     ],
   },
 
@@ -28,6 +29,7 @@ const options = {
     'src/competition/competition.routes.ts',
     'src/auth/auth.routes.ts',
     'src/admin/admin.routes.ts',
+    'src/competitor/competitor.routes.ts',
   ],
 }
 

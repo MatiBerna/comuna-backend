@@ -1,0 +1,26 @@
+GET http://localhost:3000/api/competitor?page=1&person=654c0019481831374cd6cde3
+
+###
+
+POST http://localhost:3000/api/competitor
+Content-Type: application/json
+
+{
+  "person": "654c0019481831374cd6cde3",
+  "competition": "65a67e6a293fd7648d2abb5c"
+}
+
+###
+
+PUT http://localhost:3000/api/competitor/65a9397fcea7791b53c4a4b2
+Content-Type: application/json
+
+{
+  "person": "654c0019481831374cd6cde3",
+  "competition": "65a68132293fd7648d2abbc0"
+}
+
+
+###
+
+DELETE http://localhost:3000/api/competitor/65a9390d417d20358fdfc6f1
