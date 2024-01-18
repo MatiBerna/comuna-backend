@@ -1,13 +1,33 @@
 import { Response, Request } from 'express'
 import CompetitionType from './competition-type.model.js'
 import { MongoServerError } from 'mongodb'
-import mongoose from 'mongoose'
+import mongoose, { PaginateOptions } from 'mongoose'
 import Competition from '../competition/competition.model.js'
 import { Result, validationResult } from 'express-validator'
 
 export async function findAll(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+
+  var filter = req.query.filter?.toString() || ''
+  if (req.query.page) {
+    const page = Number(req.query.page)
+
+    const options: PaginateOptions = {
+      page: page,
+      limit: 10,
+      sort: { updatedAt: -1 },
+    }
+
+    const competitionTypes = await CompetitionType.paginate({ description: { $regex: new RegExp(filter, 'i') } }, options)
+    return res.json(competitionTypes)
+  }
   const competitionTypes = await CompetitionType.find()
-  res.json(competitionTypes)
+  return res.json({ docs: competitionTypes })
 }
 
 export async function findOne(req: Request, res: Response) {

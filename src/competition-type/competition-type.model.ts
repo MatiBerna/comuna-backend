@@ -1,4 +1,5 @@
-import { Schema, model } from 'mongoose'
+import { PaginateModel, Schema, model } from 'mongoose'
+import paginate from 'mongoose-paginate-v2'
 
 export interface ICompetitionType {
   _id: string
@@ -16,4 +17,6 @@ const competitionTypeSchema = new Schema<ICompetitionType>(
   { collection: 'competition_types', versionKey: false, timestamps: true }
 )
 
-export default model('CompetitionType', competitionTypeSchema)
+competitionTypeSchema.plugin(paginate)
+
+export default model<ICompetitionType>('CompetitionType', competitionTypeSchema) as PaginateModel<ICompetitionType>

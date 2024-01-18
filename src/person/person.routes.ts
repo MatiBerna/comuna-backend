@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { add, findAll, findOne, update, remove } from './person.controller.js'
 import { checkAdminAuth, checkPersonAuth } from '../auth/auth.middleware.js'
-import { checkSchema, param } from 'express-validator'
+import { checkSchema, param, query } from 'express-validator'
 
 export const personRouter = Router()
 
@@ -77,8 +77,22 @@ export const personRouter = Router()
  *           type: string
  *         description: Token de autorización.
  */
-personRouter.get('/', checkAdminAuth, findAll)
-
+personRouter.get(
+  '/',
+  checkAdminAuth,
+  checkSchema(
+    {
+      page: {
+        trim: true,
+        notEmpty: { errorMessage: 'El número de página es requrido en query', bail: true },
+        isNumeric: { errorMessage: 'Número de página inválido' },
+      },
+    },
+    ['query']
+  ),
+  findAll
+)
+//query('page').notEmpty().withMessage('El número de pagina es requerido').isNumeric().withMessage('número de página inválido')
 /**
  * @openapi
  * /api/person/{id}:
@@ -313,7 +327,12 @@ personRouter.post(
     phone: {
       trim: true,
       optional: true,
-      isNumeric: { errorMessage: 'El campo teléfono solo debe contener números' },
+      custom: {
+        options: (value) => {
+          return value === '' || !isNaN(Number(value))
+        },
+        errorMessage: 'El campo teléfono solo debe contener números',
+      },
     },
     email: {
       trim: true,

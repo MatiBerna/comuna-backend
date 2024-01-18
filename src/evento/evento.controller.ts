@@ -1,18 +1,46 @@
 import { Response, Request } from 'express'
 import Evento from './evento.model.js'
 import { MongoServerError } from 'mongodb'
-import mongoose from 'mongoose'
+import mongoose, { PaginateOptions } from 'mongoose'
 import Competition from '../competition/competition.model.js'
 import { Result, validationResult } from 'express-validator'
 
 export async function findAll(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+
   const prox = req.query.prox
-  if (prox === 'true') {
-    const eventos = await Evento.find({ fechaHoraIni: { $gte: Date.now() } }).sort({ fechaHoraIni: 1 })
-    return res.json(eventos)
+  var filter = req.query.filter?.toString() || ''
+  if (req.query.page) {
+    const page = Number(req.query.page)
+
+    const options: PaginateOptions = {
+      page: page,
+      limit: 10,
+      sort: { fechaHoraIni: 1 },
+    }
+    if (prox === 'true') {
+      const eventos = await Evento.paginate(
+        { $and: [{ description: { $regex: new RegExp(filter, 'i') } }, { fechaHoraIni: { $gte: Date.now() } }] },
+        options
+      )
+      return res.json(eventos)
+    } else {
+      const eventos = await Evento.paginate({ description: { $regex: new RegExp(filter, 'i') } }, options)
+      return res.json(eventos)
+    }
+  } else {
+    if (prox === 'true') {
+      const eventos = await Evento.find({ fechaHoraIni: { $gte: Date.now() } }).sort({ fechaHoraIni: 1 })
+      return res.json({ docs: eventos })
+    }
   }
   const eventos = await Evento.find().sort({ fechaHoraIni: 1 })
-  res.json(eventos)
+  res.json({ docs: eventos })
 }
 
 export async function findOne(req: Request, res: Response) {

@@ -46,7 +46,20 @@ export const eventoRouter = Router()
  *           type: string
  *         description: Filtro booleano que determina si se devuelven todos o solamente los próximos
  */
-eventoRouter.get('/', findAll)
+eventoRouter.get(
+  '/',
+  checkSchema(
+    {
+      page: {
+        trim: true,
+        optional: true,
+        isNumeric: { errorMessage: 'Número de página inválido' },
+      },
+    },
+    ['query']
+  ),
+  findAll
+)
 
 /**
  * @openapi

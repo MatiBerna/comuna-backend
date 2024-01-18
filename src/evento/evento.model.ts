@@ -1,4 +1,5 @@
-import { Schema, model } from 'mongoose'
+import { PaginateModel, Schema, model } from 'mongoose'
+import paginate from 'mongoose-paginate-v2'
 
 export interface IEvento {
   _id: string
@@ -18,4 +19,6 @@ const eventoSchema = new Schema<IEvento>(
   { timestamps: true, versionKey: false }
 )
 
-export default model('Evento', eventoSchema)
+eventoSchema.plugin(paginate)
+
+export default model<IEvento>('Evento', eventoSchema) as PaginateModel<IEvento>
