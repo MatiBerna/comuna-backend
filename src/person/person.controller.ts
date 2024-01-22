@@ -162,7 +162,7 @@ export async function remove(req: Request, res: Response) {
     if (!person) {
       return res.status(404).send({ message: 'Persona no encontrada' })
     }
-    console.log('asdjfkasjdkfjaskdjf')
+
     return res.status(200).send({ message: 'Persona eliminada', data: person })
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {

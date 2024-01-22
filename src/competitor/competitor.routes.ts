@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { add, findAll, findOne, remove, update } from './competitor.controller.js'
 import { checkSchema, param } from 'express-validator'
+import { checkPersonAuth } from '../auth/auth.middleware.js'
 
 export const competitorRouter = Router()
 
@@ -77,6 +78,7 @@ export const competitorRouter = Router()
  */
 competitorRouter.get(
   '/',
+  checkPersonAuth,
   checkSchema(
     {
       page: {
@@ -183,6 +185,7 @@ competitorRouter.get(
  */
 competitorRouter.get(
   '/:id',
+  checkPersonAuth,
   param('id')
     .notEmpty()
     .withMessage('El id de inscripción es requerido')
@@ -285,6 +288,7 @@ competitorRouter.get(
  */
 competitorRouter.post(
   '/',
+  checkPersonAuth,
   checkSchema({
     person: {
       trim: true,
@@ -410,6 +414,7 @@ competitorRouter.post(
  */
 competitorRouter.put(
   '/:id',
+  checkPersonAuth,
   param('id')
     .notEmpty()
     .withMessage('El id de inscripción es requerido')
@@ -541,6 +546,7 @@ competitorRouter.put(
  */
 competitorRouter.patch(
   '/:id',
+  checkPersonAuth,
   param('id')
     .notEmpty()
     .withMessage('El id de inscripción es requerido')
@@ -649,6 +655,7 @@ competitorRouter.patch(
  */
 competitorRouter.delete(
   '/:id',
+  checkPersonAuth,
   param('id')
     .notEmpty()
     .withMessage('El id de inscripción es requerido')

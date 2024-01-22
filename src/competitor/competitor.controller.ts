@@ -4,7 +4,9 @@ import { PaginateOptions, PaginateResult } from 'mongoose'
 import Competitor, { ICompetitor } from './competitor.model.js'
 import Person from '../person/person.model.js'
 import Competition from '../competition/competition.model.js'
-import { MongoServerError } from 'mongodb'
+import { MongoServerError, ObjectId } from 'mongodb'
+import { decodeSign } from '../helpers/generateToken.js'
+import { JwtPayload } from 'jsonwebtoken'
 export async function findAll(req: Request, res: Response) {
   const result: Result = validationResult(req)
   const errors = result.array()
@@ -23,8 +25,14 @@ export async function findAll(req: Request, res: Response) {
 
   let competitors: PaginateResult<ICompetitor>
 
-  if (req.query.person) competitors = await Competitor.paginate({ person: req.query.person }, options)
-  else if (req.query.competition) competitors = await Competitor.paginate({ competition: req.query.competition }, options)
+  const rta = await checkSamePerson(req, req.query.person?.toString() || '')
+
+  if (req.query.person && rta !== 'not same') {
+    options.populate = ['competition']
+    competitors = await Competitor.paginate({ person: req.query.person }, options)
+  } else if (req.query.competition && rta === 'admin')
+    competitors = await Competitor.paginate({ competition: req.query.competition }, options)
+  else if (rta === 'not same') return res.status(401).send({ message: 'No tienes permiso' })
   else competitors = await Competitor.paginate({}, options)
 
   res.json(competitors)
@@ -60,6 +68,12 @@ export async function add(req: Request, res: Response) {
   const competitorInput = new Competitor(req.body)
 
   try {
+    const rta = await checkSamePerson(req, req.body.person)
+
+    if (rta === 'not same') {
+      return res.status(401).send({ message: 'No tienes permiso' })
+    }
+
     const person = await Person.findById(competitorInput.person)
 
     if (!person) {
@@ -111,7 +125,14 @@ export async function update(req: Request, res: Response) {
     if (!competitor) {
       return res.status(404).send({ message: 'Inscripción no encontrada' })
     }
+
     if (req.body.person) {
+      const rta = await checkSamePerson(req, competitor.person.toString())
+
+      if (rta === 'not same') {
+        return res.status(401).send({ message: 'No tienes permiso' })
+      }
+
       const person = await Person.findById(req.body.person)
 
       if (!person) {
@@ -160,12 +181,21 @@ export async function remove(req: Request, res: Response) {
   }
 
   try {
-    const competencia = await Competitor.findByIdAndDelete(req.params.id)
+    const competitorToDelete = await Competitor.findById(req.params.id)
 
-    if (!competencia) {
+    if (!competitorToDelete) {
       return res.status(404).send({ message: 'Inscripción no encontrada' })
     }
-    return res.status(200).send({ message: 'Inscripción eliminada', data: competencia })
+
+    const rta = await checkSamePerson(req, competitorToDelete.person.toString())
+
+    if (rta === 'not same') {
+      return res.status(401).send({ message: 'No tienes permiso' })
+    }
+
+    const competetitor = await Competitor.findByIdAndDelete(req.params.id)
+
+    return res.status(200).send({ message: 'Inscripción eliminada', data: competetitor })
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {
       return res.status(404).send({ message: 'Inscripción no encontrada' })
@@ -173,5 +203,19 @@ export async function remove(req: Request, res: Response) {
       console.log(err)
       return res.status(500).send({ message: 'Error interno del servidor de Datos' })
     }
+  }
+}
+
+async function checkSamePerson(req: Request, id: string) {
+  const token = String(req.headers.authorization?.split(' ').pop())
+  const userData = decodeSign(token) as JwtPayload
+
+  const person = await Person.findById(userData.user._id)
+
+  if (person) {
+    if (person._id.toString() === id) return 'same'
+    else return 'not same'
+  } else {
+    return 'admin'
   }
 }

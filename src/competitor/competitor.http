@@ -1,12 +1,14 @@
-GET http://localhost:3000/api/competitor?page=1&person=654c0019481831374cd6cde3
+GET http://localhost:3000/api/competitor?page=1&competition=65a67e6a293fd7648d2abb5c
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1Mjg4NWVjMDViZWFhMjhmZTc0ZTBiYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiU0EiLCJ1cGRhdGVkQXQiOiIyMDIzLTEyLTE0VDEzOjQ2OjAwLjg3MloifSwiaWF0IjoxNzA1NzA4NDQwLCJleHAiOjE3MDU3MTU2NDB9.lDrQMeER_aOtfVS5cxx212o6iFLFt9Aw7MrUwPATpHw
 
 ###
 
 POST http://localhost:3000/api/competitor
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1Mjg4NWVjMDViZWFhMjhmZTc0ZTBiYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiU0EiLCJ1cGRhdGVkQXQiOiIyMDIzLTEyLTE0VDEzOjQ2OjAwLjg3MloifSwiaWF0IjoxNzA1NjkxNjQ1LCJleHAiOjE3MDU2OTg4NDV9.UMdN7lAdl7WKt9m3GJmt-KXkUlDbKEa678A-HidCkL8
 Content-Type: application/json
 
 {
-  "person": "654c0019481831374cd6cde3",
+  "person": "65a1685225c29ba47030dcc3",
   "competition": "65a67e6a293fd7648d2abb5c"
 }
 
