@@ -97,6 +97,11 @@ competetitionRouter.get(
         notEmpty: { errorMessage: 'El número de página es requrido en query', bail: true },
         isNumeric: { errorMessage: 'Número de página inválido' },
       },
+      idEvento: {
+        trim: true,
+        optional: true,
+        isMongoId: { errorMessage: 'El id de evento en query es inválido' },
+      },
     },
     ['query']
   ),
