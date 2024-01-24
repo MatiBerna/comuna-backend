@@ -5,6 +5,7 @@ import Evento, { IEvento } from '../evento/evento.model.js'
 import CompetitionType from '../competition-type/competition-type.model.js'
 import { Result, validationResult } from 'express-validator'
 import { FilterQuery, PaginateOptions, PaginateResult } from 'mongoose'
+import Competitor from '../competitor/competitor.model.js'
 
 export async function findAll(req: Request, res: Response) {
   const result: Result = validationResult(req)
@@ -235,6 +236,11 @@ export async function remove(req: Request, res: Response) {
     return res.status(400).json({ errors: errors })
   }
   try {
+    const competitors = await Competitor.find({ competition: req.params.id })
+
+    if (competitors.length !== 0) {
+      return res.status(409).send({ message: 'La competencia tiene inscripciones cargadas' })
+    }
     const competencia = await Competition.findByIdAndDelete(req.params.id)
 
     if (!competencia) {

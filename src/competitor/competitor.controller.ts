@@ -3,7 +3,7 @@ import { Result, validationResult } from 'express-validator'
 import { PaginateOptions, PaginateResult } from 'mongoose'
 import Competitor, { ICompetitor } from './competitor.model.js'
 import Person from '../person/person.model.js'
-import Competition from '../competition/competition.model.js'
+import Competition, { ICompetition } from '../competition/competition.model.js'
 import { MongoServerError, ObjectId } from 'mongodb'
 import { decodeSign } from '../helpers/generateToken.js'
 import { JwtPayload } from 'jsonwebtoken'
@@ -16,6 +16,7 @@ export async function findAll(req: Request, res: Response) {
   }
 
   const page = Number(req.query.page)
+  const prox = req.query.prox
 
   const options: PaginateOptions = {
     page: page,
@@ -28,8 +29,17 @@ export async function findAll(req: Request, res: Response) {
   const rta = await checkSamePerson(req, req.query.person?.toString() || '')
 
   if (req.query.person && rta !== 'not same') {
-    options.populate = ['competition']
-    competitors = await Competitor.paginate({ person: req.query.person }, options)
+    options.populate = [{ path: 'competition', populate: [{ path: 'evento' }, { path: 'competitionType' }] }]
+    if (prox === 'true') {
+      const now = new Date()
+      const proxCompetitions = await Competition.find({ fechaHoraIni: { $gt: now } }).select('_id')
+      competitors = await Competitor.paginate(
+        {
+          $and: [{ person: req.query.person }, { competition: { $in: proxCompetitions } }],
+        },
+        options
+      )
+    } else competitors = await Competitor.paginate({ person: req.query.person }, options)
   } else if (req.query.competition && rta === 'admin')
     competitors = await Competitor.paginate({ competition: req.query.competition }, options)
   else if (rta === 'not same') return res.status(401).send({ message: 'No tienes permiso' })
@@ -181,7 +191,7 @@ export async function remove(req: Request, res: Response) {
   }
 
   try {
-    const competitorToDelete = await Competitor.findById(req.params.id)
+    const competitorToDelete = await Competitor.findById(req.params.id).populate('competition')
 
     if (!competitorToDelete) {
       return res.status(404).send({ message: 'Inscripción no encontrada' })
@@ -191,6 +201,11 @@ export async function remove(req: Request, res: Response) {
 
     if (rta === 'not same') {
       return res.status(401).send({ message: 'No tienes permiso' })
+    } else if (rta === 'same') {
+      const now = new Date()
+      if ((competitorToDelete.competition as ICompetition).fechaHoraIni < now) {
+        return res.status(401).send({ message: 'No tienes permiso' })
+      }
     }
 
     const competetitor = await Competitor.findByIdAndDelete(req.params.id)
