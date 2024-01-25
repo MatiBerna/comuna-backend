@@ -1,10 +1,11 @@
 import { Request, Response } from 'express'
 import Competition, { ICompetition } from './competition.model.js'
 import { MongoServerError } from 'mongodb'
-import Evento from '../evento/evento.model.js'
+import Evento, { IEvento } from '../evento/evento.model.js'
 import CompetitionType from '../competition-type/competition-type.model.js'
 import { Result, validationResult } from 'express-validator'
-import { PaginateOptions, PaginateResult } from 'mongoose'
+import { FilterQuery, PaginateOptions, PaginateResult } from 'mongoose'
+import Competitor from '../competitor/competitor.model.js'
 
 export async function findAll(req: Request, res: Response) {
   const result: Result = validationResult(req)
@@ -15,8 +16,9 @@ export async function findAll(req: Request, res: Response) {
   }
 
   const page = Number(req.query.page)
-  const filterEvento = req.query.evento?.toString() || ''
-  const filterCompeType = req.query.compeType?.toString() || ''
+  const filterEvento = req.query.evento?.toString()
+  const filterCompeType = req.query.compeType?.toString()
+  const evento = req.query.idEvento?.toString()
 
   const options: PaginateOptions = {
     page: page,
@@ -26,42 +28,31 @@ export async function findAll(req: Request, res: Response) {
   }
 
   let competitions: PaginateResult<ICompetition>
-
-  const eventosFiltered = await Evento.find({ description: new RegExp(filterEvento, 'i') }).select('_id')
-  const compeTypeFiltered = await CompetitionType.find({ description: new RegExp(filterCompeType, 'i') }).select('_id')
+  let query: FilterQuery<IEvento> = {}
 
   if (req.query.prox === 'true') {
-    competitions = await Competition.paginate(
-      {
-        $and: [
-          { fechaHoraIni: { $gte: Date.now() } },
-          { evento: { $in: eventosFiltered } },
-          { competitionType: { $in: compeTypeFiltered } },
-        ],
-      },
-      options
-    )
+    query['fechaHoraIni'] = { $gte: Date.now() }
   } else if (req.query.disp === 'true') {
     const now = Date.now()
     const twoDaysLater = now + 2 * 24 * 60 * 60 * 1000
-    competitions = await Competition.paginate(
-      {
-        $and: [
-          { fechaHoraIni: { $gte: now, $lte: twoDaysLater } },
-          { evento: { $in: eventosFiltered } },
-          { competitionType: { $in: compeTypeFiltered } },
-        ],
-      },
-      options
-    )
-  } else {
-    competitions = await Competition.paginate(
-      {
-        $and: [{ evento: { $in: eventosFiltered } }, { competitionType: { $in: compeTypeFiltered } }],
-      },
-      options
-    )
+    const oneMonthLater = new Date(now).setMonth(new Date(now).getMonth() + 1)
+    query['fechaHoraIni'] = { $gte: now, $lte: oneMonthLater }
   }
+
+  if (filterEvento) {
+    const eventosFiltered = await Evento.find({ description: new RegExp(filterEvento, 'i') }).select('_id')
+    query['evento'] = { $in: eventosFiltered }
+  }
+  if (filterCompeType) {
+    const compeTypeFiltered = await CompetitionType.find({ description: new RegExp(filterCompeType, 'i') }).select('_id')
+    query['competitionType'] = { $in: compeTypeFiltered }
+  }
+
+  if (evento) {
+    query['evento'] = evento
+  }
+
+  competitions = await Competition.paginate({ $and: [query] }, options)
 
   res.json(competitions)
 }
@@ -245,6 +236,11 @@ export async function remove(req: Request, res: Response) {
     return res.status(400).json({ errors: errors })
   }
   try {
+    const competitors = await Competitor.find({ competition: req.params.id })
+
+    if (competitors.length !== 0) {
+      return res.status(409).send({ message: 'La competencia tiene inscripciones cargadas' })
+    }
     const competencia = await Competition.findByIdAndDelete(req.params.id)
 
     if (!competencia) {

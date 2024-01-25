@@ -1,6 +1,6 @@
 ### busca todos
 
-GET http://localhost:3000/api/evento?page=1&t
+GET http://localhost:3000/api/evento?page=1&
 
 ### busca uno
 GET http://localhost:3000/api/evento/659c4b8430e803d04bef96bb

@@ -14,6 +14,11 @@ export const competetitionRouter = Router()
  *    description: Devuelve todas las competencias, las competencias próximas, o aquellas cuya inscripcion esté habilitada (2 dias antes).
  *    parameters:
  *      - in: query
+ *        name: page
+ *        schema:
+ *          type: number
+ *        description: Número de página de la paginación
+ *      - in: query
  *        name: prox
  *        schema:
  *          type: string
@@ -91,6 +96,11 @@ competetitionRouter.get(
         trim: true,
         notEmpty: { errorMessage: 'El número de página es requrido en query', bail: true },
         isNumeric: { errorMessage: 'Número de página inválido' },
+      },
+      idEvento: {
+        trim: true,
+        optional: true,
+        isMongoId: { errorMessage: 'El id de evento en query es inválido' },
       },
     },
     ['query']

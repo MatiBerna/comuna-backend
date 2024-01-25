@@ -4,6 +4,7 @@ import Person from './person.model.js'
 import { MongoServerError } from 'mongodb'
 import { Result, validationResult } from 'express-validator'
 import { PaginateOptions } from 'mongoose'
+import Competitor from '../competitor/competitor.model.js'
 
 export async function findAll(req: Request, res: Response) {
   const result: Result = validationResult(req)
@@ -157,12 +158,18 @@ export async function remove(req: Request, res: Response) {
   }
 
   try {
+    const competitors = await Competitor.find({ person: id })
+
+    if (competitors.length !== 0) {
+      return res.status(409).send({ message: 'El socio tiene inscripciones cargadas' })
+    }
+
     const person = await Person.findByIdAndDelete(id)
 
     if (!person) {
       return res.status(404).send({ message: 'Persona no encontrada' })
     }
-    console.log('asdjfkasjdkfjaskdjf')
+
     return res.status(200).send({ message: 'Persona eliminada', data: person })
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {

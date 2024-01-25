@@ -8,6 +8,7 @@ import { dbConect } from './shared/db/conn.js'
 import { eventoRouter } from './evento/evento.routes.js'
 import { competetitionRouter } from './competition/competition.routes.js'
 import { swaggerDocs } from './shared/swagger/swagger.js'
+import { competitorRouter } from './competitor/competitor.routes.js'
 
 const app = express()
 dbConect()
@@ -27,6 +28,7 @@ app.use('/api/auth', authRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/evento', eventoRouter)
 app.use('/api/competition', competetitionRouter)
+app.use('/api/competitor', competitorRouter)
 
 swaggerDocs(app, 3000)
 
