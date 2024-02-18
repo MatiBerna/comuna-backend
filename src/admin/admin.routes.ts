@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { add, findAll, findOne, remove, update } from './admin.controller.js'
-import { checkAdminAuth } from '../auth/auth.middleware.js'
+import { add, findAll, findOne, remove, update } from './admin.controller'
+import { checkAdminAuth } from '../auth/auth.middleware'
 import { checkSchema, param } from 'express-validator'
 
 export const adminRouter = Router()

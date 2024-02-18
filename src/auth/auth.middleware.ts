@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
-import Admin from '../admin/admin.model.js'
-import Person, { IPerson } from '../person/person.model.js'
-import { verifyToken } from '../helpers/generateToken.js'
+import Admin from '../admin/admin.model'
+import Person, { IPerson } from '../person/person.model'
+import { verifyToken } from '../helpers/generateToken'
 import { JwtPayload } from 'jsonwebtoken'
-import { IAdmin } from '../admin/admin.model.js'
+import { IAdmin } from '../admin/admin.model'
 
 export async function checkAdminAuth(req: Request, res: Response, next: NextFunction) {
   try {

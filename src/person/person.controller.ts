@@ -1,10 +1,10 @@
 import { Response, Request } from 'express'
 import { hash } from 'bcrypt-ts'
-import Person from './person.model.js'
+import Person from './person.model'
 import { MongoServerError } from 'mongodb'
 import { Result, validationResult } from 'express-validator'
 import { PaginateOptions } from 'mongoose'
-import Competitor from '../competitor/competitor.model.js'
+import Competitor from '../competitor/competitor.model'
 
 export async function findAll(req: Request, res: Response) {
   const result: Result = validationResult(req)

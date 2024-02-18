@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
-import Competition, { ICompetition } from './competition.model.js'
+import Competition, { ICompetition } from './competition.model'
 import { MongoServerError } from 'mongodb'
-import Evento, { IEvento } from '../evento/evento.model.js'
-import CompetitionType from '../competition-type/competition-type.model.js'
+import Evento, { IEvento } from '../evento/evento.model'
+import CompetitionType from '../competition-type/competition-type.model'
 import { Result, validationResult } from 'express-validator'
 import { FilterQuery, PaginateOptions, PaginateResult } from 'mongoose'
-import Competitor from '../competitor/competitor.model.js'
+import Competitor from '../competitor/competitor.model'
 
 export async function findAll(req: Request, res: Response) {
   const result: Result = validationResult(req)

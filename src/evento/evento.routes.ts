@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { add, findAll, findOne, remove, update } from './evento.controller.js'
+import { add, findAll, findOne, remove, update } from './evento.controller'
 import { checkSchema, param } from 'express-validator'
-import { checkAdminAuth } from '../auth/auth.middleware.js'
+import { checkAdminAuth } from '../auth/auth.middleware'
 
 export const eventoRouter = Router()
 
@@ -260,7 +260,7 @@ eventoRouter.get(
  */
 eventoRouter.post(
   '/',
-  checkAdminAuth,
+
   checkSchema({
     description: { trim: true, notEmpty: { errorMessage: 'La descripción es requerida' } },
     fechaHoraIni: {
