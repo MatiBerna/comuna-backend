@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import { comparePassword } from '../helpers/handleBcrypt.js'
-import { adminTokenSign, tokenSign, verifyToken } from '../helpers/generateToken.js'
-import Person from '../person/person.model.js'
-import Admin from '../admin/admin.model.js'
+import { comparePassword } from '../helpers/handleBcrypt'
+import { adminTokenSign, tokenSign, verifyToken } from '../helpers/generateToken'
+import Person from '../person/person.model'
+import Admin from '../admin/admin.model'
 
 export async function login(req: Request, res: Response) {
   try {

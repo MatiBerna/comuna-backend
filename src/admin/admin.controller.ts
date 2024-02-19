@@ -1,10 +1,9 @@
 import { Request, Response } from 'express'
 import { hash } from 'bcrypt-ts'
-import Admin, { IAdmin } from './admin.model.js'
+import Admin, { IAdmin } from './admin.model'
 import { MongoServerError } from 'mongodb'
-import { decodeSign } from '../helpers/generateToken.js'
+import { decodeSign } from '../helpers/generateToken'
 import { JwtPayload } from 'jsonwebtoken'
-import mongoose from 'mongoose'
 import { Result, validationResult } from 'express-validator'
 
 export async function add(req: Request, res: Response) {

@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { add, findAll, findOne, update, remove } from './person.controller.js'
-import { checkAdminAuth, checkPersonAuth } from '../auth/auth.middleware.js'
+import { add, findAll, findOne, update, remove } from './person.controller'
+import { checkAdminAuth, checkPersonAuth } from '../auth/auth.middleware'
 import { checkSchema, param, query } from 'express-validator'
 
 export const personRouter = Router()

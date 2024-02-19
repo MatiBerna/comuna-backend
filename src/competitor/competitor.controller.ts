@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import { Result, validationResult } from 'express-validator'
 import { PaginateOptions, PaginateResult } from 'mongoose'
-import Competitor, { ICompetitor } from './competitor.model.js'
-import Person from '../person/person.model.js'
-import Competition, { ICompetition } from '../competition/competition.model.js'
+import Competitor, { ICompetitor } from './competitor.model'
+import Person from '../person/person.model'
+import Competition, { ICompetition } from '../competition/competition.model'
 import { MongoServerError, ObjectId } from 'mongodb'
-import { decodeSign } from '../helpers/generateToken.js'
+import { decodeSign } from '../helpers/generateToken'
 import { JwtPayload } from 'jsonwebtoken'
 export async function findAll(req: Request, res: Response) {
   const result: Result = validationResult(req)

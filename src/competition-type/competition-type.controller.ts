@@ -1,8 +1,8 @@
 import { Response, Request } from 'express'
-import CompetitionType from './competition-type.model.js'
+import CompetitionType from './competition-type.model'
 import { MongoServerError } from 'mongodb'
 import mongoose, { PaginateOptions } from 'mongoose'
-import Competition from '../competition/competition.model.js'
+import Competition from '../competition/competition.model'
 import { Result, validationResult } from 'express-validator'
 
 export async function findAll(req: Request, res: Response) {

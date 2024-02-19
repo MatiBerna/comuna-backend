@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { add, findAll, findOne, remove, update } from './competition.controller.js'
+import { add, findAll, findOne, remove, update } from './competition.controller'
 import { body, checkSchema, param } from 'express-validator'
-import { checkAdminAuth } from '../auth/auth.middleware.js'
+import { checkAdminAuth } from '../auth/auth.middleware'
 
 export const competetitionRouter = Router()
 
