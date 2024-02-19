@@ -1,58 +1,75 @@
 import { Request, Response } from 'express'
-import Competition, { ICompetition } from './competition.model.js'
+import Competition, { ICompetition } from './competition.model'
 import { MongoServerError } from 'mongodb'
-import Evento, { IEvento } from '../evento/evento.model.js'
-import CompetitionType, { ICompetitionType } from '../competition-type/competition-type.model.js'
-import mongoose from 'mongoose'
+import Evento, { IEvento } from '../evento/evento.model'
+import CompetitionType from '../competition-type/competition-type.model'
+import { Result, validationResult } from 'express-validator'
+import { FilterQuery, PaginateOptions, PaginateResult } from 'mongoose'
+import Competitor from '../competitor/competitor.model'
 
 export async function findAll(req: Request, res: Response) {
-  const competitionsToSend: ICompetition[] = []
-  let competitions: ICompetition[] = await Competition.find().sort({ fechaHoraIni: 1 })
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+
+  const page = Number(req.query.page)
+  const filterEvento = req.query.evento?.toString()
+  const filterCompeType = req.query.compeType?.toString()
+  const evento = req.query.idEvento?.toString()
+
+  const options: PaginateOptions = {
+    page: page,
+    limit: 10,
+    sort: { fechaHoraIni: 1 },
+    populate: [{ path: 'evento' }, { path: 'competitionType' }],
+  }
+
+  let competitions: PaginateResult<ICompetition>
+  let query: FilterQuery<IEvento> = {}
 
   if (req.query.prox === 'true') {
-    competitions = await Competition.find({ fechaHoraIni: { $gte: Date.now() } }).sort({ fechaHoraIni: 1 })
+    query['fechaHoraIni'] = { $gte: Date.now() }
   } else if (req.query.disp === 'true') {
     const now = Date.now()
     const twoDaysLater = now + 2 * 24 * 60 * 60 * 1000
-    competitions = await Competition.find({ fechaHoraIni: { $gte: now, $lte: twoDaysLater } }).sort({ fechaHoraIni: 1 })
+    const oneMonthLater = new Date(now).setMonth(new Date(now).getMonth() + 1)
+    query['fechaHoraIni'] = { $gte: now, $lte: oneMonthLater }
   }
 
-  for (let index = 0; index < competitions.length; index++) {
-    let competition: any = competitions[index]
-    competition = competition.toObject()
-    const evento: IEvento = (await Evento.findById(competition._idEvento))!
-    const competitionType: ICompetitionType = (await CompetitionType.findById(competition._idCompetitionType))!
-
-    delete competition._idCompetitionType
-    delete competition._idEvento
-
-    competition.evento = evento
-    competition.competitionType = competitionType
-
-    competitionsToSend.push(competition)
+  if (filterEvento) {
+    const eventosFiltered = await Evento.find({ description: new RegExp(filterEvento, 'i') }).select('_id')
+    query['evento'] = { $in: eventosFiltered }
+  }
+  if (filterCompeType) {
+    const compeTypeFiltered = await CompetitionType.find({ description: new RegExp(filterCompeType, 'i') }).select('_id')
+    query['competitionType'] = { $in: compeTypeFiltered }
   }
 
-  res.json(competitionsToSend)
+  if (evento) {
+    query['evento'] = evento
+  }
+
+  competitions = await Competition.paginate({ $and: [query] }, options)
+
+  res.json(competitions)
 }
 
 export async function findOne(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
   try {
-    let competition: any = await Competition.findById(req.params.id)
+    let competition: any = await Competition.findById(req.params.id).populate('competitionType').populate('evento')
 
     if (!competition) {
       return res.status(404).send({ message: 'Competencia no encontrada' })
     }
-
-    const evento: IEvento = (await Evento.findById(competition._idEvento))!
-    const competitionType: ICompetitionType = (await CompetitionType.findById(competition._idCompetitionType))!
-
-    competition = competition.toObject()
-
-    delete competition._idCompetitionType
-    delete competition._idEvento
-
-    competition.evento = evento
-    competition.competitionType = competitionType
 
     res.json(competition)
   } catch (err) {
@@ -66,43 +83,51 @@ export async function findOne(req: Request, res: Response) {
 }
 
 export async function add(req: Request, res: Response) {
-  if (req.body.costoInscripcion && isNaN(req.body.costoInscripcion)) {
-    return res.status(400).send({ message: 'El costo de inscripcion debe ser un numero real' })
-  }
-  if (req.body.fechaHoraIni && new Date(req.body.fechaHoraIni).toString() === 'Invalid Date') {
-    return res.status(400).send({ message: 'La fecha de inicio debe ser una fecha valida' })
-  }
-  if (req.body.fechaHoraFinEstimada && new Date(req.body.fechaHoraFinEstimada).toString() === 'Invalid Date') {
-    return res.status(400).send({ message: 'La fecha de fin estimada debe ser una fecha valida' })
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
   }
 
   const competenciaInput = new Competition(req.body)
 
   try {
-    if (competenciaInput.fechaHoraFinEstimada < competenciaInput.fechaHoraIni) {
-      return res.status(400).send({ message: 'La fecha de fin no puede ser anterior a la fecha de inicio' })
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(competenciaInput._idEvento)) {
-      return res.status(400).send({ message: 'No existe Evento con el id ingresado' })
-    }
-    const evento = await Evento.findById(competenciaInput._idEvento)
+    const evento = await Evento.findById(competenciaInput.evento)
 
     if (evento) {
-      if (evento.fechaHoraIni > competenciaInput.fechaHoraIni || evento.fechaHoraFin < competenciaInput.fechaHoraFinEstimada) {
-        return res.status(400).send({ message: 'La fechas ingresadas estan fuera del rango del evento' })
+      if (evento.fechaHoraIni > competenciaInput.fechaHoraIni) {
+        const fechaError = {
+          type: 'field',
+          value: competenciaInput.fechaHoraIni,
+          msg: 'La fecha de inicio esta fuera del rango del evento',
+          path: 'fechaHoraIni',
+          location: 'body',
+        }
+        errors.push(fechaError)
+      }
+      if (evento.fechaHoraFin < competenciaInput.fechaHoraFinEstimada) {
+        const fechaError = {
+          type: 'field',
+          value: competenciaInput.fechaHoraFinEstimada,
+          msg: 'La fecha de fin estimada esta fuera del rango del evento',
+          path: 'fechaHoraFinEstimada',
+          location: 'body',
+        }
+        errors.push(fechaError)
       }
     } else {
-      return res.status(400).send({ message: 'No existe Evento con el id ingresado' })
+      return res.status(404).send({ message: 'Evento no encontrado' })
     }
 
-    if (!mongoose.Types.ObjectId.isValid(competenciaInput._idCompetitionType)) {
-      return res.status(400).send({ message: 'No existe Tipo de Competencia con el id ingresado' })
-    }
-    const competitionType = await CompetitionType.findById(competenciaInput._idCompetitionType)
+    const competitionType = await CompetitionType.findById(competenciaInput.competitionType)
 
     if (!competitionType) {
-      return res.status(400).send({ message: 'No existe Tipo de Competencia con el id ingresado' })
+      return res.status(404).send({ message: 'Tipo de Competencia no encontrada' })
+    }
+
+    if (errors.length !== 0) {
+      return res.status(400).json({ errors: errors })
     }
 
     const competencia = await competenciaInput.save()
@@ -114,7 +139,7 @@ export async function add(req: Request, res: Response) {
       console.log(mongoErr)
       return res.status(400).send({ message: 'Falta atributo/s requerido/s' })
     } else if (mongoErr.name === 'MongoServerError' && mongoErr.code === 11000) {
-      return res.status(400).send({ message: 'Competencia en el evento duplicada' })
+      return res.status(409).send({ message: 'Competencia en el evento duplicada' })
     } else {
       console.log(err)
       return res.status(500).send({ message: 'Error interno del servidor de Datos' })
@@ -123,72 +148,79 @@ export async function add(req: Request, res: Response) {
 }
 
 export async function update(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).send({ message: 'No existe Competencia con el id ingresado' })
-    }
     const competencia = await Competition.findById(req.params.id)
     if (competencia) {
       if (req.body.fechaHoraIni || req.body.fechaHoraFinEstimada) {
         var fechaHoraIni: Date | undefined = undefined
         var fechaHoraFinEstimada: Date | undefined = undefined
 
-        if (req.body.fechaHoraIni) {
-          fechaHoraIni = new Date(req.body.fechaHoraIni)
-          if (fechaHoraIni.toString() === 'Invalid Date') {
-            return res.status(400).send({ message: 'Fecha de inicio ingresada invalida' })
-          }
-        }
-        if (req.body.fechaHoraFinEstimada) {
-          fechaHoraFinEstimada = new Date(req.body.fechaHoraFinEstimada)
-          if (fechaHoraFinEstimada.toString() === 'Invalid Date') {
-            return res.status(400).send({ message: 'Fecha de fin estimada ingresada invalida' })
-          }
-        }
+        if (req.body.fechaHoraIni) fechaHoraIni = new Date(req.body.fechaHoraIni)
+        if (req.body.fechaHoraFinEstimada) fechaHoraFinEstimada = new Date(req.body.fechaHoraFinEstimada)
 
         if ((fechaHoraIni || competencia.fechaHoraIni) > (fechaHoraFinEstimada || competencia.fechaHoraFinEstimada)) {
-          return res.status(400).send({ message: 'La fecha de fin no puede ser anterior a la fecha de inicio' })
+          const fechaError = {
+            type: 'field',
+            value: fechaHoraIni || competencia?.fechaHoraIni,
+            msg: 'La fecha y hora de fin debe ser posterior a la fecha y hora de inicio',
+            path: 'fechaHoraIni',
+            location: 'body',
+          }
+          errors.push(fechaError)
         }
 
-        if (req.body._idEvento && !mongoose.Types.ObjectId.isValid(req.body._idEvento)) {
-          return res.status(400).send({ message: 'No existe Evento con el id ingresado' })
-        }
-        const evento = await Evento.findById(req.body._idEvento || competencia._idEvento)
+        const evento = await Evento.findById(req.body.evento || competencia.evento)
 
         if (evento) {
-          // validar que las fechas no se vayan del rango del evento
           if (
             evento.fechaHoraIni > (fechaHoraIni || competencia.fechaHoraIni) ||
             evento.fechaHoraFin < (fechaHoraFinEstimada || competencia.fechaHoraFinEstimada)
           ) {
-            return res.status(400).send({ message: 'Las fechas ingresadas estan fuera del rango del evento' })
+            const fechaError = {
+              type: 'field',
+              value: fechaHoraIni || competencia?.fechaHoraIni,
+              msg: 'Las fechas ingresadas estan fuera del rango del evento',
+              path: 'fechaHoraIni',
+              location: 'body',
+            }
+            errors.push(fechaError)
           }
         } else {
-          return res.status(400).send({ message: 'No existe ningun evento con el id ingresado' })
+          return res.status(404).send({ message: 'Evento no encontrado' })
+        }
+      } else {
+        const evento = await Evento.findById(req.body.evento || competencia.evento)
+        if (!evento) {
+          return res.status(404).send({ message: 'Evento no encontrado' })
         }
       }
-      if (req.body._idCompetitionType && !mongoose.Types.ObjectId.isValid(req.body._idCompetitionType)) {
-        return res.status(400).send({ message: 'No existe Tipo de Competencia con el id ingresado' })
-      }
-      const tipoCompetencia = await CompetitionType.findById(req.body._idCompetitionType || competencia._idCompetitionType)
+
+      const tipoCompetencia = await CompetitionType.findById(req.body.competitionType || competencia.competitionType)
       if (!tipoCompetencia) {
-        return res.status(400).send({ message: 'No existe tipo de competencia con el id ingresado' })
+        return res.status(404).send({ message: 'Tipo de Competencia no encontrada' })
       }
 
-      if (req.body.costoInscripcion && isNaN(req.body.costoInscripcion)) {
-        return res.status(400).send({ message: 'El costo de inscripcion debe ser un numero real' })
+      if (errors.length !== 0) {
+        return res.status(400).json({ errors: errors })
       }
 
       const mCompetencia = await Competition.findByIdAndUpdate(req.params.id, req.body, { new: true })
       res.json(mCompetencia)
     } else {
-      return res.status(400).send({ message: 'No existe una competencia con el id ingresado' })
+      return res.status(404).send({ message: 'Competencia no encontrada' })
     }
   } catch (err) {
     const mongoErr: MongoServerError = err as MongoServerError
 
     if (mongoErr.name === 'MongoServerError' && mongoErr.code === 11000) {
-      return res.status(400).send({ message: 'Competencia en el evento duplicada' })
+      return res.status(409).send({ message: 'Competencia en el evento duplicada' })
     } else {
       console.log(err)
       return res.status(500).send({ message: 'Error interno del servidor de Datos' })
@@ -197,7 +229,18 @@ export async function update(req: Request, res: Response) {
 }
 
 export async function remove(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
   try {
+    const competitors = await Competitor.find({ competition: req.params.id })
+
+    if (competitors.length !== 0) {
+      return res.status(409).send({ message: 'La competencia tiene inscripciones cargadas' })
+    }
     const competencia = await Competition.findByIdAndDelete(req.params.id)
 
     if (!competencia) {

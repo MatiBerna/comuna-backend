@@ -1,18 +1,42 @@
-import { Response, Request, NextFunction } from 'express'
-//import { CompetitionTypeRepository } from './competition-type.repository.js'
-import CompetitionType from './competition-type.model.js'
+import { Response, Request } from 'express'
+import CompetitionType from './competition-type.model'
 import { MongoServerError } from 'mongodb'
-import mongoose from 'mongoose'
-import Competition from '../competition/competition.model.js'
-
-//const repository = new CompetitionTypeRepository()
+import mongoose, { PaginateOptions } from 'mongoose'
+import Competition from '../competition/competition.model'
+import { Result, validationResult } from 'express-validator'
 
 export async function findAll(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+
+  var filter = req.query.filter?.toString() || ''
+  if (req.query.page) {
+    const page = Number(req.query.page)
+
+    const options: PaginateOptions = {
+      page: page,
+      limit: 10,
+      sort: { updatedAt: -1 },
+    }
+
+    const competitionTypes = await CompetitionType.paginate({ description: { $regex: new RegExp(filter, 'i') } }, options)
+    return res.json(competitionTypes)
+  }
   const competitionTypes = await CompetitionType.find()
-  res.json(competitionTypes)
+  return res.json({ docs: competitionTypes })
 }
 
 export async function findOne(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
   try {
     const competitionType = await CompetitionType.findById(req.params.id)
 
@@ -32,7 +56,12 @@ export async function findOne(req: Request, res: Response) {
 }
 
 export async function add(req: Request, res: Response) {
-  //const competitionTypeInput = new CompetitionType(input.description, input.rules)
+  const result: Result = validationResult(req)
+  const errors = result.array()
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+
   const competitionTypeInput = new CompetitionType(req.body)
 
   try {
@@ -49,6 +78,12 @@ export async function add(req: Request, res: Response) {
 }
 
 export async function update(req: Request, res: Response) {
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
   try {
     const competitionType = await CompetitionType.findByIdAndUpdate(req.params.id, req.body, { new: true })
 
@@ -70,12 +105,19 @@ export async function update(req: Request, res: Response) {
 export async function remove(req: Request, res: Response) {
   const id = req.params.id
 
+  const result: Result = validationResult(req)
+  const errors = result.array()
+
+  if (!result.isEmpty()) {
+    return res.status(400).json({ errors: errors })
+  }
+
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(404).send({ message: 'Tipo de competencia no encontrado' })
     }
 
-    const competitionsOfType = await Competition.find({ _idCompetitionType: id })
+    const competitionsOfType = await Competition.find({ competitionType: id })
 
     if (competitionsOfType.length !== 0) {
       return res.status(409).send({ message: 'Hay competencias del tipo seleccionado' })
@@ -85,7 +127,7 @@ export async function remove(req: Request, res: Response) {
     if (!competitionType) {
       return res.status(404).send({ message: 'Tipo de competencia no encontrado' })
     }
-    return res.status(200).send({ message: 'Competition Type deleted', data: competitionType })
+    return res.status(200).send({ message: 'Tipo de Competencia eliminado', data: competitionType })
   } catch (err) {
     if (err instanceof Error && err.name === 'CastError') {
       return res.status(404).send({ message: 'Tipo de competencia no encontrado' })

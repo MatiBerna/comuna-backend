@@ -1,14 +1,16 @@
 import express from 'express'
-import { personRouter } from './person/person.routes.js'
-import { competitionTypeRouter } from './competition-type/competition-type.routes.js'
+import { personRouter } from './person/person.routes'
+import { competitionTypeRouter } from './competition-type/competition-type.routes'
 import cors from 'cors'
-import { authRouter } from './auth/auth.routes.js'
-import { adminRouter } from './admin/admin.routes.js'
-import { dbConect } from './shared/db/conn.js'
-import { eventoRouter } from './evento/evento.routes.js'
-import { competetitionRouter } from './competition/competition.routes.js'
+import { authRouter } from './auth/auth.routes'
+import { adminRouter } from './admin/admin.routes'
+import { dbConect } from './shared/db/conn'
+import { eventoRouter } from './evento/evento.routes'
+import { competetitionRouter } from './competition/competition.routes'
+import { swaggerDocs } from './shared/swagger/swagger'
+import { competitorRouter } from './competitor/competitor.routes'
 
-const app = express()
+export const app = express()
 dbConect()
 
 app.use(express.json())
@@ -26,11 +28,14 @@ app.use('/api/auth', authRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/evento', eventoRouter)
 app.use('/api/competition', competetitionRouter)
+app.use('/api/competitor', competitorRouter)
+
+swaggerDocs(app, 3000)
 
 app.use((_, res) => {
   return res.status(404).send({ mesage: 'Resourse not found' })
 })
 
-app.listen(3000, () => {
+export const server = app.listen(3000, () => {
   console.log('Server running on http://localhost:3000/')
 })

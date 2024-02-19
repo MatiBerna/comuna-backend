@@ -1,10 +1,10 @@
 ### busca todos
 
-GET http://localhost:3000/api/competition
+GET http://localhost:3000/api/competition?page=1&prox=true
 
 
 ### busca uno
-GET http://localhost:3000/api/competition/656ba9228f617b7370ced541
+GET http://localhost:3000/api/competition/65a67e6a293fd7648d2abb5c
 
 
 ### añade 
@@ -12,32 +12,40 @@ POST http://localhost:3000/api/competition
 Content-Type: application/json
 
 {
-  "_idCompetitionType": "654c012efc3bee6944d4c0df",
-  "_idEvento": "656614c314a1a83b57231c09",
+  "competitionType": "654c012efc3bee6944d4c0df",
+  "evento": "656614c314a1a83b57231c09",
   "descripcion": "Competencia de levantamiento de dedo meñique",
-  "fechaHoraIni": "2024-01-01T00:00:00.000Z",
+  "fechaHoraIni": "2024-01-01T05:00:00.000Z",
   "fechaHoraFinEstimada": "2024-01-01T06:00:00.000Z",
   "premios": "Una champagne",
-  "costoInscripcion": 20
+  "costoInscripcion": 20.1
 }
 
 ### MODIFICA
 
-PUT http://localhost:3000/api/competition/65676eec4c08eea25044730e
+PUT http://localhost:3000/api/competition/6583513aff4d0fe9fbb71df5
 Content-Type: application/json
 
 {
-  "_idCompetitionType": "6524b0b2a1b2ef79b1d2bb07",
-  "_idEvento": "656a4cbeefd3b1c20e4fb0cf",
+  "competitionType": "6524b0b2a1b2ef79b1d2bb07",
+  "evento": "656a4cbeefd3b1c20e4fb0cf",
   "descripcion": "Competencia de levantamiento de dedo meñique",
-  "fechaHoraIni": "2023-12-24T20:00:00.000Z",
-  "fechaHoraFinEstimada": "2023-12-25T06:00:00.000Z",
+  "fechaHoraIni": "2023-12-24T23:00:00.000Z",
+  "fechaHoraFinEstimada": "2023-12-25T05:00:00.000Z",
   "premios": "Una champagne",
   "costoInscripcion": 21
+}
+
+### MODIFICA ALGUNOS
+PATCH http://localhost:3000/api/competition/656cdba8d88bacd44f628410
+Content-Type: application/json
+
+{
+  "competitionType": "659c4b8430e803d04bef96bb"
 }
 
 
 
 
 ### BORRAR
-DELETE http://localhost:3000/api/competition/65690497e88d46e3842ede7e
+DELETE http://localhost:3000/api/competition/6583513aff4d0fe9fbb71df5

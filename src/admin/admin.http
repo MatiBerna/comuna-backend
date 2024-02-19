@@ -1,20 +1,24 @@
 
 GET http://localhost:3000/api/admin
-
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1Mjg4NWVjMDViZWFhMjhmZTc0ZTBiYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJ1cGRhdGVkQXQiOiIyMDIzLTEyLTA2VDE1OjUxOjM3LjgzMloifSwiaWF0IjoxNzAyNDkzNTk3LCJleHAiOjE3MDI1MDA3OTd9.qpC4MJr-264oJyxO8iLmP4CSmmEQsBaRJRbgALBjITs
 ### obtener un admin
 GET http://localhost:3000/api/admin/65288264d47fbd72b90b119c
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1Mjg4NWVjMDViZWFhMjhmZTc0ZTBiYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJ1cGRhdGVkQXQiOiIyMDIzLTEyLTA2VDE1OjUxOjM3LjgzMloifSwiaWF0IjoxNzAyNDkzNTk3LCJleHAiOjE3MDI1MDA3OTd9.qpC4MJr-264oJyxO8iLmP4CSmmEQsBaRJRbgALBjITs
+
 
 ### añadir un admin
 post http://localhost:3000/api/admin
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1Mjg4NWVjMDViZWFhMjhmZTc0ZTBiYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJ1cGRhdGVkQXQiOiIyMDIzLTEyLTA2VDE1OjUxOjM3LjgzMloifSwiaWF0IjoxNzAyNDkzNTk3LCJleHAiOjE3MDI1MDA3OTd9.qpC4MJr-264oJyxO8iLmP4CSmmEQsBaRJRbgALBjITs
 Content-Type: application/json
 
 {
-  "username": "admina",
+  "username": "admina2",
   "password": "1234"
 }
 
 ### modifico un admin
 PUT http://localhost:3000/api/admin/652885ce05beaa28fe74e0ba
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1Mjg4NWVjMDViZWFhMjhmZTc0ZTBiYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJ1cGRhdGVkQXQiOiIyMDIzLTEyLTA2VDE1OjUxOjM3LjgzMloifSwiaWF0IjoxNzAyNDkzNTk3LCJleHAiOjE3MDI1MDA3OTd9.qpC4MJr-264oJyxO8iLmP4CSmmEQsBaRJRbgALBjITs
 Content-Type: application/json
 
 {
@@ -23,4 +27,5 @@ Content-Type: application/json
 }
 
 ### elimino un admin
-DELETE http://localhost:3000/api/admin/652842f5486a20dc163bd5c0
+DELETE http://localhost:3000/api/admin/652885ce05beaa28fe74e0ba
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1Mjg4NWVjMDViZWFhMjhmZTc0ZTBiYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJ1cGRhdGVkQXQiOiIyMDIzLTEyLTA2VDE1OjUxOjM3LjgzMloifSwiaWF0IjoxNzAyNDkzNTk3LCJleHAiOjE3MDI1MDA3OTd9.qpC4MJr-264oJyxO8iLmP4CSmmEQsBaRJRbgALBjITs

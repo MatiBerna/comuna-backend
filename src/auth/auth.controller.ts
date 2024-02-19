@@ -1,15 +1,14 @@
 import { Request, Response } from 'express'
-import { comparePassword } from '../helpers/handleBcrypt.js'
-import { adminTokenSign, tokenSign, verifyToken } from '../helpers/generateToken.js'
-import Person from '../person/person.model.js'
-import Admin from '../admin/admin.model.js'
+import { comparePassword } from '../helpers/handleBcrypt'
+import { adminTokenSign, tokenSign, verifyToken } from '../helpers/generateToken'
+import Person from '../person/person.model'
+import Admin from '../admin/admin.model'
 
 export async function login(req: Request, res: Response) {
   try {
-    const { email, password } = req.body
+    const { username, password } = req.body
 
-    const user = await Person.findOne({ email: email })
-    console.log(user)
+    const user = await Person.findOne({ email: username })
 
     if (!user) {
       return res.status(401).send({ message: 'Nombre de usuario o contraseña incorrectos' })

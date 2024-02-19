@@ -1,5 +1,5 @@
 ### obterner todas los tipos de competicion
-GET http://localhost:3000/api/competition-type
+GET http://localhost:3000/api/competition-type?page=1&filter=v
 
 ### obtener un tipo de competicion por su id
 
