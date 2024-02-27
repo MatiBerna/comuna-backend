@@ -10,7 +10,7 @@ const options = {
       description: 'API que se encarga de manejar datos de la comuna villa fucsia',
       version: '1.0.0',
     },
-    servers: [{ url: 'http://localhost:3000/api' }],
+    servers: [{ url: 'http://localhost:3000' }],
     tags: [
       { name: 'Person', description: 'Endpoint que maneja CRUD de personas' },
       { name: 'Competition Type', description: 'Endpoint que maneja CRUD de tipos de competencia' },
