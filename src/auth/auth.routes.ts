@@ -71,7 +71,6 @@ export const authRouter = Router()
  *                  example: Nombre de usuario o contraseña incorrectos
  */
 authRouter.post('/user/login', login)
-authRouter.post('/register')
 
 /**
  * @openapi

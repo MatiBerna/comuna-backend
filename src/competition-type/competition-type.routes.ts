@@ -11,29 +11,97 @@ export const competitionTypeRouter = Router()
  *  get:
  *    tags:
  *      - Competition Type
- *    description: Devuelve todas los tipos competencias
+ *    description: Devuelve todos los tipos competencias (paginación opcional)
+ *    parameters:
+ *      - in: query
+ *        name: page
+ *        schema:
+ *          type: number
+ *        description: Numero de página
+ *      - in: query
+ *        name: filter
+ *        schema:
+ *          type: string
+ *        description: Filtro por description
  *    responses:
  *      200:
  *        description: OK
  *        content:
  *          application/json:
  *            schema:
- *              type: array
- *              items:
- *                type: object
- *                properties:
- *                  _id:
- *                    type: string
- *                    description: ID unico del tipo de competencia
- *                  description:
- *                    type: string
- *                    description: Descripcion del tipo de competencia (nombre)
- *                  image:
- *                    type: string
- *                    description: URL de la imagen del tipo de competencia
- *                  rules:
- *                    type: string
- *                    description: Descripcion de las reglas del tipo de competencia
+ *              type: object
+ *              properties:
+ *                docs:
+ *                  type: array
+ *                  items:
+ *                    type: object
+ *                    properties:
+ *                      _id:
+ *                        type: string
+ *                        description: ID unico del tipo de competencia
+ *                      description:
+ *                        type: string
+ *                        description: Descripcion del tipo de competencia (nombre)
+ *                      image:
+ *                        type: string
+ *                        description: URL de la imagen del tipo de competencia
+ *                      rules:
+ *                        type: string
+ *                        description: Descripcion de las reglas del tipo de competencia
+ *                totalDocs:
+ *                  type: number
+ *                  description: numero total de documentos
+ *                limit:
+ *                  type: number
+ *                  description: limite de documuentos por página
+ *                totalPages:
+ *                  type: number
+ *                  description: Numero total de páginas
+ *                page:
+ *                  type: number
+ *                  description: Numero actual de página
+ *                pagingCounter:
+ *                  type: number
+ *                  description: Numero del primer documento de la página
+ *                hasPrevPage:
+ *                  type: boolean
+ *                  description: Indica si hay una pagina anterior
+ *                hasNextPage:
+ *                  type: boolean
+ *                  description: Indica si hay una pagina posterior
+ *                prevPage:
+ *                  type: number
+ *                  description: Si hay página previa, indica el número de la misma, si no, es null
+ *                nextPage:
+ *                  type: number
+ *                  description: Si hay página posterior, indica el número de la misma, si no, es null
+ *      400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: El número de página inválido
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: query
  */
 competitionTypeRouter.get(
   '/',
@@ -220,6 +288,16 @@ competitionTypeRouter.get(
  *                      location:
  *                        type: string
  *                        example: body
+ *      401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: No tienes permiso
  *      500:
  *         description: Internal Server Error
  *         content:
@@ -334,6 +412,16 @@ competitionTypeRouter.post(
  *                      location:
  *                        type: string
  *                        example: params
+ *      401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: No tienes permiso
  *      404:
  *         description: Not Found
  *         content:
@@ -458,6 +546,16 @@ competitionTypeRouter.put(
  *                      location:
  *                        type: string
  *                        example: params
+ *      401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: No tienes permiso
  *      404:
  *         description: Not Found
  *         content:
@@ -513,6 +611,11 @@ competitionTypeRouter.patch(
  *          type: string
  *        required: true
  *        description: ID del tipo de competencia a eliminar.
+ *      - in: header
+ *        name: Authorization
+ *        schema:
+ *          type: string
+ *        description: Token de autorización.
  *    responses:
  *      200:
  *        description: OK
@@ -566,6 +669,16 @@ competitionTypeRouter.patch(
  *                      location:
  *                        type: string
  *                        example: params
+ *      401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: No tienes permiso
  *      404:
  *         description: Not Found
  *         content:

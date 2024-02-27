@@ -11,13 +11,16 @@ export const eventoRouter = Router()
  *   get:
  *     tags:
  *       - Evento
- *     description: Devuelve todos los evento o aquellas que cumplan con el filtro (prox boolean, indica si devuelve todos o solos los eventos proximos)
+ *     description: Devuelve todos los evento o aquellas que cumplan con el filtro (prox boolean, indica si devuelve todos o solos los eventos proximos, paginación opcional)
  *     responses:
  *       200:
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
+ *               type: object
+ *               properties:
+ *                 docs:
  *                   type: array
  *                   items:
  *                     type: object
@@ -39,12 +42,76 @@ export const eventoRouter = Router()
  *                         type: string
  *                         format: date
  *                         description: Fecha y hora de fin del evento.
+ *                 totalDocs:
+ *                   type: number
+ *                   description: numero total de documentos
+ *                 limit:
+ *                   type: number
+ *                   description: limite de documuentos por página
+ *                 totalPages:
+ *                   type: number
+ *                   description: Numero total de páginas
+ *                 page:
+ *                   type: number
+ *                   description: Numero actual de página
+ *                 pagingCounter:
+ *                   type: number
+ *                   description: Numero del primer documento de la página
+ *                 hasPrevPage:
+ *                   type: boolean
+ *                   description: Indica si hay una pagina anterior
+ *                 hasNextPage:
+ *                   type: boolean
+ *                   description: Indica si hay una pagina posterior
+ *                 prevPage:
+ *                   type: number
+ *                   description: Si hay página previa, indica el número de la misma, si no, es null
+ *                 nextPage:
+ *                   type: number
+ *                   description: Si hay página posterior, indica el número de la misma, si no, es null
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: Número de página inválido
+ *                      path:
+ *                        type: string
+ *                        example: page
+ *                      location:
+ *                        type: string
+ *                        example: query
  *     parameters:
  *       - in: query
  *         name: prox
  *         schema:
  *           type: string
  *         description: Filtro booleano que determina si se devuelven todos o solamente los próximos
+ *       - in: query
+ *         name: filter
+ *         schema:
+ *           type: string
+ *         description: Filtro por descripción
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: number
+ *         description: Número de página
  */
 eventoRouter.get(
   '/',
@@ -161,6 +228,12 @@ eventoRouter.get(
  *    tags:
  *      - Evento
  *    description: Guarda un nuevo evento en la base de datos
+ *    parameters:
+ *      - in: header
+ *        name: Authorization
+ *        schema:
+ *          type: string
+ *        description: Token de autorización.
  *    requestBody:
  *      required: true
  *      content:
@@ -237,6 +310,16 @@ eventoRouter.get(
  *                      location:
  *                        type: string
  *                        example: body
+ *      401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: No tienes permiso
  *      409:
  *        description: Confict
  *        content:
@@ -260,7 +343,7 @@ eventoRouter.get(
  */
 eventoRouter.post(
   '/',
-
+  checkAdminAuth,
   checkSchema({
     description: { trim: true, notEmpty: { errorMessage: 'La descripción es requerida' } },
     fechaHoraIni: {
@@ -296,6 +379,11 @@ eventoRouter.post(
  *          type: string
  *        required: true
  *        description: ID del evento a modificar
+ *      - in: header
+ *        name: Authorization
+ *        schema:
+ *          type: string
+ *        description: Token de autorización.
  *    requestBody:
  *      required: true
  *      content:
@@ -366,6 +454,16 @@ eventoRouter.post(
  *                      location:
  *                        type: string
  *                        example: body
+ *      401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: No tienes permiso
  *      404:
  *        description: Not Found
  *        content:
@@ -436,6 +534,11 @@ eventoRouter.put(
  *          type: string
  *        required: true
  *        description: ID del evento a modificar
+ *      - in: header
+ *        name: Authorization
+ *        schema:
+ *          type: string
+ *        description: Token de autorización.
  *    requestBody:
  *      required: true
  *      content:
@@ -506,6 +609,16 @@ eventoRouter.put(
  *                      location:
  *                        type: string
  *                        example: body
+ *      401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: No tienes permiso
  *      404:
  *        description: Not Found
  *        content:
@@ -576,6 +689,11 @@ eventoRouter.patch(
  *          type: string
  *        required: true
  *        description: ID del evento a eliminar
+ *      - in: header
+ *        name: Authorization
+ *        schema:
+ *          type: string
+ *        description: Token de autorización.
  *    responses:
  *      200:
  *        description: OK
@@ -634,6 +752,16 @@ eventoRouter.patch(
  *                      location:
  *                        type: string
  *                        example: params
+ *      401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: No tienes permiso
  *      404:
  *        description: Not Found
  *        content:

@@ -11,7 +11,7 @@ export const competetitionRouter = Router()
  *  get:
  *    tags:
  *      - Competition
- *    description: Devuelve todas las competencias, las competencias próximas, o aquellas cuya inscripcion esté habilitada (2 dias antes).
+ *    description: Devuelve todas las competencias, las competencias próximas, o aquellas cuya inscripcion esté habilitada (2 dias antes, paginación obligatoria).
  *    parameters:
  *      - in: query
  *        name: page
@@ -34,59 +34,116 @@ export const competetitionRouter = Router()
  *        content:
  *          application/json:
  *            schema:
- *              type: array
- *              items:
- *                type: object
- *                properties:
- *                  _id:
- *                    type: string
- *                    description: ID único de la competencia
- *                  descripcion:
- *                    type: string
- *                    description: Descripcion de la competencia (motivo u otro texto).
- *                  evento:
+ *              type: object
+ *              properties:
+ *                docs:
+ *                  type: array
+ *                  items:
  *                    type: object
  *                    properties:
  *                      _id:
  *                        type: string
- *                        description: Id del evento
- *                      description:
+ *                        description: ID único de la competencia
+ *                      descripcion:
  *                        type: string
- *                        description: Descripcion del evento (nombre o movito del evento)
+ *                        description: Descripcion de la competencia (motivo u otro texto).
+ *                      evento:
+ *                        type: object
+ *                        properties:
+ *                          _id:
+ *                            type: string
+ *                            description: Id del evento
+ *                          description:
+ *                            type: string
+ *                            description: Descripcion del evento (nombre o movito del evento)
+ *                          fechaHoraIni:
+ *                            type: string
+ *                            format: date
+ *                            description: Fecha y hora de inicio del evento.
+ *                          fechaHoraFin:
+ *                            type: string
+ *                            format: date
+ *                            description: Fecha y hora de fin del evento.
+ *                      competitionType:
+ *                        type: object
+ *                        properties:
+ *                          _id:
+ *                            type: string
+ *                            description: ID unico del tipo de competencia
+ *                          description:
+ *                            type: string
+ *                            description: Descripcion del tipo de competencia (nombre)
+ *                          rules:
+ *                            type: string
+ *                            description: Descripcion de las reglas del tipo de competencia
  *                      fechaHoraIni:
  *                        type: string
  *                        format: date
  *                        description: Fecha y hora de inicio del evento.
- *                      fechaHoraFin:
+ *                      fechaHoraFinEstimada:
  *                        type: string
  *                        format: date
  *                        description: Fecha y hora de fin del evento.
- *                  competitionType:
+ *                      premios:
+ *                        type: string
+ *                        description: Descripcion de los premios a repartir a los ganadores
+ *                      costoInscripcion:
+ *                        type: number
+ *                        description: Costo de inscripcion (real, mayor o igual a 0)
+ *                totalDocs:
+ *                  type: number
+ *                  description: numero total de documentos
+ *                limit:
+ *                  type: number
+ *                  description: limite de documuentos por página
+ *                totalPages:
+ *                  type: number
+ *                  description: Numero total de páginas
+ *                page:
+ *                  type: number
+ *                  description: Numero actual de página
+ *                pagingCounter:
+ *                  type: number
+ *                  description: Numero del primer documento de la página
+ *                hasPrevPage:
+ *                  type: boolean
+ *                  description: Indica si hay una pagina anterior
+ *                hasNextPage:
+ *                  type: boolean
+ *                  description: Indica si hay una pagina posterior
+ *                prevPage:
+ *                  type: number
+ *                  description: Si hay página previa, indica el número de la misma, si no, es null
+ *                nextPage:
+ *                  type: number
+ *                  description: Si hay página posterior, indica el número de la misma, si no, es null
+ *      400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
  *                    type: object
  *                    properties:
- *                      _id:
+ *                      type:
  *                        type: string
- *                        description: ID unico del tipo de competencia
- *                      description:
+ *                        example: field
+ *                      value:
  *                        type: string
- *                        description: Descripcion del tipo de competencia (nombre)
- *                      rules:
+ *                        example: abcd123
+ *                      msg:
  *                        type: string
- *                        description: Descripcion de las reglas del tipo de competencia
- *                  fechaHoraIni:
- *                    type: string
- *                    format: date
- *                    description: Fecha y hora de inicio del evento.
- *                  fechaHoraFinEstimada:
- *                    type: string
- *                    format: date
- *                    description: Fecha y hora de fin del evento.
- *                  premios:
- *                    type: string
- *                    description: Descripcion de los premios a repartir a los ganadores
- *                  costoInscripcion:
- *                    type: number
- *                    description: Costo de inscripcion (real, mayor o igual a 0)
+ *                        example: El número de página es requerido en query
+ *                      path:
+ *                        type: string
+ *                        example: id
+ *                      location:
+ *                        type: string
+ *                        example: query
  */
 competetitionRouter.get(
   '/',
@@ -239,6 +296,12 @@ competetitionRouter.get(
  *    tags:
  *      - Competition
  *    description: Guarda una competencia en la base de datos
+ *    parameters:
+ *      - in: header
+ *        name: Authorization
+ *        schema:
+ *          type: string
+ *        description: Token de autorización.
  *    requestBody:
  *      required: true
  *      content:
@@ -249,10 +312,10 @@ competetitionRouter.get(
  *              descripcion:
  *                type: string
  *                description: Descripcion de la competencia (movito u otro texto)
- *              _idCompetitionType:
+ *              competitionType:
  *                type: string
  *                description: ID único de un tipo de competencia
- *              _idEvento:
+ *              evento:
  *                type: string
  *                description: ID único de un evento
  *              fechaHoraIni:
@@ -289,10 +352,10 @@ competetitionRouter.get(
  *                    descripcion:
  *                      type: string
  *                      description: Descripcion de la competencia (movito u otro texto)
- *                    _idCompetitionType:
+ *                    competitionType:
  *                      type: string
  *                      description: ID único de un tipo de competencia
- *                    _idEvento:
+ *                    evento:
  *                      type: string
  *                      description: ID único de un evento
  *                    fechaHoraIni:
@@ -336,6 +399,36 @@ competetitionRouter.get(
  *                      location:
  *                        type: string
  *                        example: body
+ *      401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: No tienes permiso
+ *      404:
+ *        description: Not Found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: Evento no encontrado
+ *      409:
+ *         description: Conflict
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Competencia en el evento duplicada
  *      500:
  *        description: Internal Server Error
  *        content:
@@ -402,6 +495,11 @@ competetitionRouter.post(
  *          type: string
  *        required: true
  *        description: ID de la competencia a modificar
+ *      - in: header
+ *        name: Authorization
+ *        schema:
+ *          type: string
+ *        description: Token de autorización.
  *    requestBody:
  *      required: true
  *      content:
@@ -412,10 +510,10 @@ competetitionRouter.post(
  *              descripcion:
  *                type: string
  *                description: Descripcion de la competencia (movito u otro texto)
- *              _idCompetitionType:
+ *              competitionType:
  *                type: string
  *                description: ID único de un tipo de competencia
- *              _idEvento:
+ *              evento:
  *                type: string
  *                description: ID único de un evento
  *              fechaHoraIni:
@@ -452,10 +550,10 @@ competetitionRouter.post(
  *                    descripcion:
  *                      type: string
  *                      description: Descripcion de la competencia (movito u otro texto)
- *                    _idCompetitionType:
+ *                    competitionType:
  *                      type: string
  *                      description: ID único de un tipo de competencia
- *                    _idEvento:
+ *                    evento:
  *                      type: string
  *                      description: ID único de un evento
  *                    fechaHoraIni:
@@ -499,6 +597,16 @@ competetitionRouter.post(
  *                      location:
  *                        type: string
  *                        example: body
+ *      401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: No tienes permiso
  *      404:
  *        description: Not Found
  *        content:
@@ -508,7 +616,17 @@ competetitionRouter.post(
  *              properties:
  *                message:
  *                  type: string
- *                  example: Competencia no encontrada
+ *                  example: Evento no encontrado
+ *      409:
+ *         description: Conflict
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Competencia en el evento duplicada
  *      500:
  *        description: Internal Server Error
  *        content:
@@ -568,6 +686,11 @@ competetitionRouter.put(
  *          type: string
  *        required: true
  *        description: ID de la competencia a modificar
+ *      - in: header
+ *        name: Authorization
+ *        schema:
+ *          type: string
+ *        description: Token de autorización.
  *    requestBody:
  *      required: true
  *      content:
@@ -578,10 +701,10 @@ competetitionRouter.put(
  *              descripcion:
  *                type: string
  *                description: Descripcion de la competencia (movito u otro texto)
- *              _idCompetitionType:
+ *              competitionType:
  *                type: string
  *                description: ID único de un tipo de competencia
- *              _idEvento:
+ *              evento:
  *                type: string
  *                description: ID único de un evento
  *              fechaHoraIni:
@@ -618,10 +741,10 @@ competetitionRouter.put(
  *                    descripcion:
  *                      type: string
  *                      description: Descripcion de la competencia (movito u otro texto)
- *                    _idCompetitionType:
+ *                    competitionType:
  *                      type: string
  *                      description: ID único de un tipo de competencia
- *                    _idEvento:
+ *                    evento:
  *                      type: string
  *                      description: ID único de un evento
  *                    fechaHoraIni:
@@ -665,6 +788,16 @@ competetitionRouter.put(
  *                      location:
  *                        type: string
  *                        example: body
+ *      401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: No tienes permiso
  *      404:
  *        description: Not Found
  *        content:
@@ -674,7 +807,7 @@ competetitionRouter.put(
  *              properties:
  *                message:
  *                  type: string
- *                  example: Competencia no encontrada
+ *                  example: Evento no encontrado
  *      409:
  *        description: Conflict
  *        content:
@@ -743,6 +876,11 @@ competetitionRouter.patch(
  *          type: string
  *        required: true
  *        description: ID de la competencia a eliminar
+ *      - in: header
+ *        name: Authorization
+ *        schema:
+ *          type: string
+ *        description: Token de autorización.
  *    responses:
  *      200:
  *        description: OK
@@ -763,10 +901,10 @@ competetitionRouter.patch(
  *                    descripcion:
  *                      type: string
  *                      description: Descripcion de la competencia (movito u otro texto)
- *                    _idCompetitionType:
+ *                    competitionType:
  *                      type: string
  *                      description: ID único de un tipo de competencia
- *                    _idEvento:
+ *                    evento:
  *                      type: string
  *                      description: ID único de un evento
  *                    fechaHoraIni:
@@ -810,6 +948,16 @@ competetitionRouter.patch(
  *                      location:
  *                        type: string
  *                        example: params
+ *      401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: No tienes permiso
  *      404:
  *        description: Not Found
  *        content:
@@ -820,6 +968,16 @@ competetitionRouter.patch(
  *                message:
  *                  type: string
  *                  example: Competencia no encontrada
+ *      409:
+ *         description: Conflict
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: La competencia tiene inscripciones cargadas
  *      500:
  *        description: Internal Server Error
  *        content:

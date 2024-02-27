@@ -18,6 +18,9 @@ export const personRouter = Router()
  *         content:
  *           application/json:
  *             schema:
+ *               type: object
+ *               properties:
+ *                 docs:
  *                   type: array
  *                   items:
  *                     type: object
@@ -44,6 +47,33 @@ export const personRouter = Router()
  *                         type: string
  *                         format: date
  *                         description: Fecha de nacimiento de la persona.
+ *                 totalDocs:
+ *                   type: number
+ *                   description: numero total de documentos
+ *                 limit:
+ *                   type: number
+ *                   description: limite de documuentos por página
+ *                 totalPages:
+ *                   type: number
+ *                   description: Numero total de páginas
+ *                 page:
+ *                   type: number
+ *                   description: Numero actual de página
+ *                 pagingCounter:
+ *                   type: number
+ *                   description: Numero del primer documento de la página
+ *                 hasPrevPage:
+ *                   type: boolean
+ *                   description: Indica si hay una pagina anterior
+ *                 hasNextPage:
+ *                   type: boolean
+ *                   description: Indica si hay una pagina posterior
+ *                 prevPage:
+ *                   type: number
+ *                   description: Si hay página previa, indica el número de la misma, si no, es null
+ *                 nextPage:
+ *                   type: number
+ *                   description: Si hay página posterior, indica el número de la misma, si no, es null
  *
  *       401:
  *         description: Unauthorized
@@ -62,15 +92,37 @@ export const personRouter = Router()
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: token incorrecto o inexistente
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                    type: object
+ *                    properties:
+ *                      type:
+ *                        type: string
+ *                        example: field
+ *                      value:
+ *                        type: string
+ *                        example: abcd123
+ *                      msg:
+ *                        type: string
+ *                        example: Número de página inválido
+ *                      path:
+ *                        type: string
+ *                        example: page
+ *                      location:
+ *                        type: string
+ *                        example: query
  *     parameters:
  *       - in: query
  *         name: filter
  *         schema:
  *           type: string
  *         description: Filtro de budsqueda de personas por nombre, apellido o DNI.
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: string
+ *         description: Número de página
  *       - in: header
  *         name: Authorization
  *         schema:
@@ -92,7 +144,7 @@ personRouter.get(
   ),
   findAll
 )
-//query('page').notEmpty().withMessage('El número de pagina es requerido').isNumeric().withMessage('número de página inválido')
+
 /**
  * @openapi
  * /api/person/{id}:
@@ -168,6 +220,16 @@ personRouter.get(
  *                      location:
  *                        type: string
  *                        example: params
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No tienes permiso
  *       404:
  *         description: Not Found
  *         content:
@@ -294,6 +356,16 @@ personRouter.get(
  *                      location:
  *                        type: string
  *                        example: body
+ *       409:
+ *         description: Conflict
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email repetido
  *       500:
  *         description: Internal Server Error
  *         content:
@@ -354,7 +426,7 @@ personRouter.post(
 
 /**
  * @openapi
- * /person/{id}:
+ * /api/person/{id}:
  *   put:
  *     tags:
  *       - Person
@@ -477,6 +549,16 @@ personRouter.post(
  *                 message:
  *                   type: string
  *                   example: Persona no encontrada
+ *       409:
+ *         description: Conflict
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email repetido
  *       500:
  *         description: Internal Server Error
  *         content:
@@ -488,7 +570,6 @@ personRouter.post(
  *                   type: string
  *                   example: Error interno del servidor de Datos
  */
-
 personRouter.put(
   '/:id',
   checkPersonAuth,
@@ -535,7 +616,7 @@ personRouter.put(
 
 /**
  * @openapi
- * /person/{id}:
+ * /api/person/{id}:
  *   patch:
  *     tags:
  *       - Person
@@ -658,6 +739,16 @@ personRouter.put(
  *                 message:
  *                   type: string
  *                   example: Persona no encontrada
+ *       409:
+ *         description: Conflict
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email repetido
  *       500:
  *         description: Internal Server Error
  *         content:
@@ -804,6 +895,16 @@ personRouter.patch(
  *                 message:
  *                   type: string
  *                   example: Persona no encontrada
+ *       409:
+ *         description: Conflict
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: El socio tiene inscripciones cargadas
  *       500:
  *         description: Internal Server Error
  *         content:
