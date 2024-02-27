@@ -45,6 +45,7 @@ Estoy ejecutará la api que responderá en el link: localhost:3000/
 - swagger-ui-express 5.0.0
 
 ## Rutas
+Una vez iniciada la API, podrás encontrar la documentación detallada en http://localhost:3000/api/docs/
 ## Person path: /api/person
 - path GET | POST {dni, firstName, lastName, (phone), email, birthdate, password}
 - path/:id GET | PUT {dni, firstName, lastName, (phone), email, birthdate, password} | PATCH {dni, firstName, lastName, (phone), email, birthdate, password} | DELETE
