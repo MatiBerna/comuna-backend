@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc -p ./tsconfig.json",
+    "start": "node dist/app.js",
     "start:dev": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node --es-module-specifier-resolution=node ./dist/app.js\"",
     "test": "jest --verbose --silent --detectOpenHandles"
   },
