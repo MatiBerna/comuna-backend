@@ -594,7 +594,12 @@ personRouter.put(
     phone: {
       trim: true,
       optional: true,
-      isNumeric: { errorMessage: 'El campo teléfono solo debe contener números' },
+      custom: {
+        options: (value) => {
+          return value === '' || !isNaN(Number(value))
+        },
+        errorMessage: 'El campo teléfono solo debe contener números',
+      },
     },
     email: {
       trim: true,
@@ -784,7 +789,12 @@ personRouter.patch(
     phone: {
       trim: true,
       optional: true,
-      isNumeric: { errorMessage: 'El campo teléfono solo debe contener números' },
+      custom: {
+        options: (value) => {
+          return value === '' || !isNaN(Number(value))
+        },
+        errorMessage: 'El campo teléfono solo debe contener números',
+      },
     },
     email: {
       trim: true,
