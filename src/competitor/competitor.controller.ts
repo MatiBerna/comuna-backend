@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Result, validationResult } from 'express-validator'
-import { PaginateOptions, PaginateResult } from 'mongoose'
+import { Document, PaginateOptions, PaginateResult } from 'mongoose'
 import Competitor, { ICompetitor } from './competitor.model'
 import Person from '../person/person.model'
 import Competition, { ICompetition } from '../competition/competition.model'
@@ -24,10 +24,11 @@ export async function findAll(req: Request, res: Response) {
     populate: ['person'],
   }
 
-  let competitors: PaginateResult<ICompetitor>
+  let competitors: PaginateResult<ICompetitor> | ICompetition[]
 
   const rta = await checkSamePerson(req, req.query.person?.toString() || '')
 
+  //si es person coincidente
   if (req.query.person && rta !== 'not same') {
     options.populate = [{ path: 'competition', populate: [{ path: 'evento' }, { path: 'competitionType' }] }]
     if (prox === 'true') {
@@ -39,9 +40,21 @@ export async function findAll(req: Request, res: Response) {
         },
         options
       )
+    } else if (req.query.evento) {
+      // si se envia un evento es para el feature de inscripción en evento-description, se manda solo id y competition sin populate
+      const myCompetitions = await Competition.find({ evento: req.query.evento }).select('_id')
+      competitors = await Competitor.find({
+        $and: [{ person: req.query.person }, { competition: { $in: myCompetitions } }],
+      }).select('_id competition')
+
+      return res.json({ docs: competitors })
+      // si no se envia ni proximos ni eventos
     } else competitors = await Competitor.paginate({ person: req.query.person }, options)
+
+    //si es admin
   } else if (req.query.competition && rta === 'admin')
     competitors = await Competitor.paginate({ competition: req.query.competition }, options)
+  //si no es persona coincidente ni admin
   else if (rta === 'not same') return res.status(401).send({ message: 'No tienes permiso' })
   else competitors = await Competitor.paginate({}, options)
 
