@@ -11,7 +11,12 @@ export const competitorRouter = Router()
  *  get:
  *    tags:
  *      - Competitor
- *    description: Devuelve todas las inscripciones. O aquellas cuya competencia o persona coincidan con el parametro seleccionado
+ *    description: |
+ *       Devuelve todas las inscripciones. O aquellas cuya competencia o persona coincidan con el parámetro seleccionado.
+ *       Al utilizar el filtro evento, se devolverá una lista de objetos con las propiedades _id y competition (sin populación, solo el ID de la competencia).
+ *       Opciones de populación:
+ *       - Si el usuario es admin, se realizará la populación por persona.
+ *       - Si el usuario es person, se realizará la populación por competencia, y en la misma se incluirá la populación por evento y tipo de competencia.
  *    parameters:
  *      - in: header
  *        name: Authorization
@@ -39,6 +44,11 @@ export const competitorRouter = Router()
  *        schema:
  *          type: string
  *        description: Filtro de inscripciones a eventos próximos (true)
+ *      - in: query
+ *        name: evento
+ *        schema:
+ *          type: string
+ *        description: Filtro para competencias de un mismo evento
  *    responses:
  *      200:
  *        description: OK
@@ -145,6 +155,11 @@ competitorRouter.get(
         optional: true,
         trim: true,
         isMongoId: { errorMessage: 'Id de persona inválido' },
+      },
+      evento: {
+        optional: true,
+        trim: true,
+        isMongoId: { errorMessage: 'Id de evento inválido' },
       },
     },
     ['query']
